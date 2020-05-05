@@ -10,6 +10,6 @@ set auto-login coreos.autologin
 set oem coreos.oem.id=packet
 
 kernel ${coreos-url}/rhcos-${zstream}-${arch}-installer-kernel-${arch} ${console} ${first-boot} ${auto-login} ${oem}
-initrd ${coreos-url}/rhcos-${zstream}-${arch}-installer-initramfs-${arch}
+initrd ${coreos-url}/rhcos-${zstream}-${arch}-installer-initramfs-${arch}.img
 
 boot
