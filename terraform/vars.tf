@@ -1,3 +1,15 @@
+variable "cf_email" {
+  description = "Your Cloudflare email address"
+}
+
+variable "cf_api_key" {
+  description = "Your Cloudflare API key"
+}
+
+variable "cf_zone_id" {
+  description = "Your Cloudflare Zone"
+}
+
 variable "auth_token" {
   description = "Your Packet API key"
 }
@@ -40,3 +52,4 @@ variable "cluster_name" {
   default = "packet-openshift"
   description = "Cluster name label"
 }
+
