@@ -22,7 +22,7 @@ data "template_file" "installer_config" {
   vars = {
     cluster_name         = var.cluster_name
     cluster_basedomain   = var.cluster_basedomain
-    ssh_private_key_path = var.ssh_public_key_path
+    ssh_public_key_path = var.ssh_public_key_path
     count_master         = var.count_master
     count_compute        = var.count_compute
     pullsecret_path      = "${path.root}/artifacts/pullsecret.json"

@@ -19,5 +19,5 @@ controlPlane:
   replicas: ${count_master}
 platform:
   none: {}
-sshKey: '${trimspace(file("${ssh_private_key_path}"))}'
+sshKey: '${trimspace(file("${ssh_public_key_path}"))}'
 pullSecret: '${trimspace(file("${pullsecret_path}"))}'
