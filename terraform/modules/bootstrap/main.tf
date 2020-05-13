@@ -17,7 +17,7 @@ resource "packet_device" "openshift_bootstrap" {
   billing_cycle    = "hourly"
   project_id       = "${var.project_id}"
 
-  user_data        = "${file("${path.module}/bootstrap.ign")}"
+  user_data        = "${file("${path.root}/artifacts/bootstrap.ign")}"
 }
 
 resource "cloudflare_record" "dns_a_bootstrap" {
