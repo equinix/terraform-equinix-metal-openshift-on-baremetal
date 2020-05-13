@@ -23,14 +23,19 @@ variable "ssh_private_key_path" {
   default     = "~/.ssh/id_rsa"
 }
 
+variable "ssh_public_key_path" {
+  description = "Your SSH public key path (used for install-config.yaml)"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
 variable "facility" {
   description = "Your primary facility"
-  default     = "ewr1"
+  default     = "dfw2"
 }
 
 variable "plan_master" {
   description = "Plan for Master Nodes"
-  default     = "c1.small.x86"
+  default     = "c2.medium.x86"
 }
 
 variable "plan_compute" {
@@ -49,7 +54,16 @@ variable "count_compute" {
 }
 
 variable "cluster_name" {
-  default = "packet-openshift"
+  default = "packet"
   description = "Cluster name label"
 }
 
+variable "cluster_basedomain" {
+  default     = "ocp.shifti.us"
+  description = "Base domain for your cluster"
+}
+
+variable "ocp_version" {
+  default = "4.4"
+  description = "OpenShift minor release version"
+}
