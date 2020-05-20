@@ -3,6 +3,7 @@ variable "cluster_basedomain" {}
 variable "ssh_public_key_path" {}
 variable "count_master" {}
 variable "count_compute" {}
+variable "bastion_ip" {}
 
 resource "null_resource" "ocp_installer" {
   provisioner "local-exec" {
@@ -30,16 +31,27 @@ data "template_file" "installer_config" {
 }
 
 resource "null_resource" "ocp_install_config" {
-  //depends_on = [null_resource.ocp_installer]
+  depends_on = [data.template_file.installer_config, null_resource.ocp_installer, null_resource.ocp_pullsecret]
   provisioner "local-exec" {
-    command = "cat > ${path.root}/artifacts/install-config.yaml <<EOL\n${data.template_file.installer_config.rendered}\nEOL"
+    command = "cat > ${path.root}/artifacts/install/install-config.yaml <<EOL\n${data.template_file.installer_config.rendered}\nEOL"
   }
 }
 
 resource "null_resource" "ocp_install_manifests" {
-  depends_on = [data.template_file.installer_config]
+  depends_on = [null_resource.ocp_install_config]
   provisioner "local-exec" {
-    command = "${path.root}/artifacts/openshift-install create ignition-configs --dir ${path.root}/artifacts/"
+    command = "${path.root}/artifacts/openshift-install create ignition-configs --dir ${path.root}/artifacts/install"
   }
 }
+
+output "finished" {
+    depends_on = [null_resource.ocp_install_manifests]
+    value      = "null"
+}
+
+//provisioner "file" {
+//  source       = "${path.root}/artifacts/"
+//  destination = "/usr/share/nginx"
+//}
+
 

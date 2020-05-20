@@ -10,5 +10,7 @@ else
 		--output $RDIR/artifacts/openshift-install.tar.gz;
 fi
 
+rm -rf $RDIR/artifacts/install
+mkdir $RDIR/artifacts/install
 cd $RDIR/artifacts;
 tar -xvzf openshift-install.tar.gz;

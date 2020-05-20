@@ -1,0 +1,18 @@
+resource "github_repository" "gh_ocp_installer_repo" {
+  name             = "ocp_installer_artifacts_${var.cluster_name}_${var.cluster_basedomain}"
+  description      = "Artifact repository for ${var.cluster_name}.${var.cluster_basedomain}"
+  auto_init        = "true"
+  license_template = "mit"
+}
+
+resource "github_repository_file" "gh_ocp_ign_bootstrap" {
+  repository = "ocp_installer_artifacts_${var.cluster_name}_${var.cluster_basedomain}"
+  file       = "bootstrap.ign"
+  content    = "${file("${path.root}/artifacts/bootstrap.ign")}"
+  depends_on = [ null_resource.ocp_install_manifests, github_repository.gh_ocp_installer_repo]
+}
+
+//output "Information" {
+//  value = "Raw URL: ${github_repository_file.gh_ocp_ign_bootstrap.sha}"
+//}
+

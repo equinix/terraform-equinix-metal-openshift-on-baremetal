@@ -30,7 +30,7 @@ variable "ssh_public_key_path" {
 
 variable "facility" {
   description = "Your primary facility"
-  default     = "dfw2"
+  default     = "iad2"
 }
 
 variable "plan_master" {

@@ -1,48 +1,101 @@
-variable "plan" {}
-variable "node_count" {}
-variable "facility" {}
-variable "cluster_name" {}
+variable "depends" {
+  default = []
+}
 variable "ssh_private_key_path" {}
-variable "project_id" {}
-variable "cf_zone_id" {}
 
-//resource "packet_reserved_ip_block" "ip_bootstrap" {
-//  project_id = "${var.project_id}"
-//  facility   = "${var.facility}"
-//  quantity   = 2 //var.node_count
-//}
-
-resource "packet_device" "openshift_bootstrap" {
-  hostname           = "${format("bootstrap-%01d.${var.cluster_name}", count.index)}"
-  operating_system   = "custom_ipxe"
-  ipxe_script_url    = "http://shifti.us/ipxe/"
-  //ipxe_script_url  = "http://shifti.us/ipxe/?ip=${cidrhost(packet_reserved_ip_block.ip_bootstrap.cidr_notation,1)}&gw=${packet_reserved_ip_block.ip_bootstrap.network}&netmask=${packet_reserved_ip_block.ip_bootstrap.netmask}&hostname=${format("bootstrap-%01d.${var.cluster_name}", count.index)}"
-  plan               = "${var.plan}"
-  facilities         = ["${var.facility}"]
-  count              = "${var.node_count}"
-
-  always_pxe         = true
-
-//  ip_address {
-//     type = "public_ipv4"
-//     cidr = 31
-//     reservation_ids = [packet_reserved_ip_block.ip_bootstrap.id]
-//  }
-//  ip_address {
-//     type = "private_ipv4"
-//  }
-
-  billing_cycle    = "hourly"
-  project_id       = "${var.project_id}"
-  user_data        = "${file("${path.module}/bootstrap.ign")}"
+provider "packet" {
+    auth_token = var.auth_token
 }
 
-resource "cloudflare_record" "dns_a_bootstrap" {
-  zone_id    = "${var.cf_zone_id}"
-  type       = "A"
-  name       = "bootstrap-${count.index}.${var.cluster_name}"
-  value      = "${packet_device.openshift_bootstrap[count.index].access_public_ipv4}"
-  count      = "${var.node_count}"
+data "template_file" "user_data" { 
+    template = file("${path.module}/templates/user_data.sh")
 }
 
+resource "null_resource" "depends_on" {
+  triggers = {
+    depends_on = "${join("", var.depends)}"
+  }
+}
+
+resource "packet_device" "nginx" {
+    hostname = "nginx" 
+    plan = var.plan
+    facilities = [var.facility]
+    operating_system = var.operating_system
+    billing_cycle = var.billing_cycle
+    project_id = var.project_id
+    user_data = data.template_file.user_data.rendered
+
+}
+
+resource "null_resource" "dircheck" {
+
+provisioner "remote-exec" {
+
+  connection {
+    private_key = "${file("${var.ssh_private_key_path}")}"
+    host        = packet_device.nginx.access_public_ipv4
+  }
+
+
+  inline = [
+    "while [ ! -d /usr/share/nginx/html ]; do sleep 2; done; ls /usr/share/nginx/html/"
+  ]
+}
+
+
+}
+
+resource "null_resource" "file_uploads" {
+
+  depends_on = [null_resource.dircheck]
+
+provisioner "file" {
+
+  connection {
+    private_key = "${file("${var.ssh_private_key_path}")}"
+    host        = packet_device.nginx.access_public_ipv4
+  }
+
+  source       = "${path.root}/artifacts/install/bootstrap.ign"
+  destination = "/usr/share/nginx/html/bootstrap.ign"
+}
+
+provisioner "file" {
+
+  connection {
+    private_key = "${file("${var.ssh_private_key_path}")}"
+    host        = packet_device.nginx.access_public_ipv4
+  }
+
+  source       = "${path.root}/artifacts/install/master.ign"
+  destination = "/usr/share/nginx/html/master.ign"
+}
+
+provisioner "file" {
+
+  connection {
+    private_key = "${file("${var.ssh_private_key_path}")}"
+    host        = packet_device.nginx.access_public_ipv4
+  }
+
+  source       = "${path.root}/artifacts/install/worker.ign"
+  destination = "/usr/share/nginx/html/worker.ign"
+}
+
+//while [ ! -f /tmp/list.txt ]; do sleep 2; done; ls -l /tmp/list.txt
+
+provisioner "remote-exec" {
+
+  connection {
+    private_key = "${file("${var.ssh_private_key_path}")}"
+    host        = packet_device.nginx.access_public_ipv4
+  }
+
+
+  inline = [
+    "chmod -R 0755 /usr/share/nginx/html/"
+  ]
+}
+}
 
