@@ -5,6 +5,11 @@ variable "count_master" {}
 variable "count_compute" {}
 variable "bastion_ip" {}
 
+variable "depends" {
+  type    = any
+  default = null
+}
+
 resource "null_resource" "ocp_installer" {
   provisioner "local-exec" {
     command = "${path.module}/scripts/get-ocp-installer.sh ${path.root}"
@@ -39,19 +44,27 @@ resource "null_resource" "ocp_install_config" {
 
 resource "null_resource" "ocp_install_manifests" {
   depends_on = [null_resource.ocp_install_config]
+
   provisioner "local-exec" {
-    command = "${path.root}/artifacts/openshift-install create ignition-configs --dir ${path.root}/artifacts/install"
+    command = <<EOT
+      cp ${path.root}/artifacts/install/install-config.yaml ${path.root}/artifacts/install/install-config.yaml.backup;
+      ${path.root}/artifacts/openshift-install create manifests --dir ${path.root}/artifacts/install;
+      sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' ${path.root}/artifacts/install/manifests/cluster-scheduler-02-config.yml;
+      ${path.root}/artifacts/openshift-install create ignition-configs --dir ${path.root}/artifacts/install;
+    EOT
   }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "rm -rf ${path.root}/artifacts/install"
+  }
+
+
 }
 
 output "finished" {
     depends_on = [null_resource.ocp_install_manifests]
-    value      = "null"
+    value      = "OpenShift manifest and ignition creation finshed"
 }
-
-//provisioner "file" {
-//  source       = "${path.root}/artifacts/"
-//  destination = "/usr/share/nginx"
-//}
 
 

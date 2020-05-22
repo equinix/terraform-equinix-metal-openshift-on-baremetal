@@ -8,6 +8,11 @@ variable "project_id" {}
 variable "cf_zone_id" {}
 variable "bastion_ip" {}
 variable "node_type" {}
+variable "depends" {
+  type    = any
+  default = null
+}
+
 
 resource "packet_device" "node" {
   hostname           = "${format("${var.node_type}-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
@@ -29,5 +34,9 @@ resource "cloudflare_record" "dns_a_node" {
   name       = "${var.node_type}-${count.index}.${var.cluster_name}.${var.cluster_basedomain}"
   value      = "${packet_device.node[count.index].access_public_ipv4}"
   count      = "${var.node_count}"
+}
+
+output "finished" {
+  value      = "Provisioning node type ${var.node_type} finished."
 }
 
