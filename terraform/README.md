@@ -1,4 +1,35 @@
-# Usage
+# OpenShift via Terraform on Packet
+This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes on [Packet](http://packet.com). DNS records are automatically configured using Cloudflare.
+
+## Install Terraform
+Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
+
+Here is an example for **macOS**:
+```bash
+curl -LO https://releases.hashicorp.com/terraform/0.12.25/terraform_0.12.25_darwin_amd64.zip
+unzip terraform_0.12.25_darwin_amd64.zip
+chmod +x terraform
+sudo mv terraform /usr/local/bin/
+```
+### Additional requirements
+
+`local-exec` provisioners require the use of:
+  - `curl`
+  - `jq`
+
+## Download this project
+To download this project, run the following command:
+
+```bash
+git clone https://github.com/c0dyhi11/packet-nginx.git
+cd packet-nginx
+```
+
+## Initialize Terraform
+Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform`
+
+
+## Usage
 
   1. Configure an API token for your account/project
   2. Configure TF_VARs applicable to your Packet project
