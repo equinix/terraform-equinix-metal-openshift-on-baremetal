@@ -7,6 +7,8 @@ variable "ssh_private_key_path" {}
 variable "project_id" {}
 variable "cf_zone_id" {}
 variable "bastion_ip" {}
+variable "count_master" {}
+variable "count_compute" {}
 variable "depends" {
   type    = any
   default = null
@@ -36,12 +38,35 @@ resource "cloudflare_record" "dns_a_bootstrap" {
   count      = "${var.node_count}"
 }
 
+locals {
+  expanded_masters = <<-EOT
+        %{ for i in range(var.count_master) ~}
+        server master-${i}.${var.cluster_name}.${var.cluster_basedomain}:6443;
+        %{ endfor }
+  EOT
+  expanded_mcs = <<-EOT
+        %{ for i in range(var.count_master) ~}
+        server master-${i}.${var.cluster_name}.${var.cluster_basedomain}:22623;
+        %{ endfor }
+  EOT
+  expanded_compute = <<-EOT
+        %{ for i in range(var.count_compute) ~}
+        server worker-${i}.${var.cluster_name}.${var.cluster_basedomain}:443;
+        %{ endfor }
+  EOT
+}
+
 data "template_file" "nginx_lb" {
     template = file("${path.module}/templates/nginx-lb.conf.tpl")
 
   vars = {
     cluster_name         = var.cluster_name
     cluster_basedomain   = var.cluster_basedomain
+    count_master         = var.count_master
+    count_compute        = var.count_compute
+    expanded_masters     = local.expanded_masters
+    expanded_compute     = local.expanded_compute
+    expanded_mcs         = local.expanded_mcs
   }
 
 }
