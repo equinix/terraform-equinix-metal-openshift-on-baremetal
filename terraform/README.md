@@ -21,8 +21,8 @@ sudo mv terraform /usr/local/bin/
 To download this project, run the following command:
 
 ```bash
-git clone https://github.com/c0dyhi11/packet-nginx.git
-cd packet-nginx
+git clone https://github.com/RedHatSI/openshift-packet-deploy.git
+cd openshift-packet-deploy/terraform
 ```
 
 ## Initialize Terraform
@@ -32,8 +32,8 @@ Terraform uses modules to deploy infrastructure. In order to initialize the modu
 ## Usage
 
   1. Configure an API token for your account/project
-  2. Configure TF_VARs applicable to your Packet project
-     ```
+  2. Configure TF_VARs applicable to your Packet project using 
+     ```bash
      export TF_VAR_project_id="kajs886-l59-8488-19910kj"
      export TF_VAR_project_name="automated-openshift-work"
      export TF_VAR_auth_token="lka6702KAmVAP8957Abny01051"
@@ -45,24 +45,17 @@ Terraform uses modules to deploy infrastructure. In order to initialize the modu
      ```
 
   3. Initialize and validate terraform
-     ```
+     ```bash
      terraform init
      terraform validate
      ```
 
-  4. Apply the MinIO Resource for S3-compatible storage
-     ```
-     terraform apply -target=module.minio --auto-approve
-     ```
-
   5. Apply the remaining resources:
-     ```
-     terraform apply --auto-approve
+     ```bash
+     terraform apply
      ``` 
 
-
-  **OPTIONAL** Confirm the upload of ignition files to MinIO S3 endpoint(s) by connecting to the MinIO server and executing:
+  6. Cleanup the boostrap node once provisioning and installation is complete
+     ```bash
+     terraform destroy --target=module.bootstrap_openshift.packet_device.bootstrap[0]
      ```
-     mc ls minio/public
-     ```
-
