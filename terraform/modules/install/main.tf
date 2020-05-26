@@ -34,8 +34,33 @@ resource "null_resource" "ocp_bootstrap_cleanup" {
   }
 }
 
+resource "null_resource" "ocp_installer_wait_for_completion" {
+
+  depends_on = [null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup ]
+
+  provisioner "local-exec" {
+  command    = <<EOT
+    while [ ! -f ${path.root}/artifacts/install/auth/kubeconfig ]; do sleep 2; done;
+    ${path.root}/artifacts/openshift-install --dir ${path.root}/artifacts/install wait-for install-complete;
+  EOT
+  }
+}
+
+//resource "null_resource" "ocp_approve_pending_csrs" {
+//
+//  depends_on = [ null_resource.ocp_installer_wait_for_completion ]
+//
+//  provisioner "local-exec" {
+//  command    = <<EOT
+//    source ${path.root}/artifacts/install/auth/kubeconfig;
+//    while [ ! -f ${path.root}/artifacts/install/auth/kubeconfig ]; do sleep 2; done;
+//    ${path.root}/artifacts/openshift-install --dir ${path.root}/artifacts/install wait-for install-complete;
+//  EOT
+//  }
+//}
+
 output "finished" {
-    depends_on = [null_resource.ocp_install_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup]
-    value      = "Bootstrap wait and cleanup finished"
+    depends_on = [null_resource.ocp_install_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup, null_resource.ocp_installer_wait_for_completion ]
+    value      = "OpenShift install wait and cleanup finished"
 }
 
