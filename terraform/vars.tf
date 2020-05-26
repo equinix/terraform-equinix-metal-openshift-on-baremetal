@@ -67,3 +67,9 @@ variable "ocp_version" {
   default = "4.4"
   description = "OpenShift minor release version"
 }
+
+variable "ocp_version_zstream" {
+  default = "3"
+  description = "OpenShift zstream version"
+
+}
