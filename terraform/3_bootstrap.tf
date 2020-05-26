@@ -4,6 +4,8 @@ module "bootstrap_openshift" {
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
   node_count           = 1
+  count_compute        = var.count_compute
+  count_master         = var.count_master
   plan                 = var.plan_master
   facility             = var.facility
   ssh_private_key_path = var.ssh_private_key_path

@@ -1,7 +1,9 @@
 stream {
     upstream backend_api {
         server bootstrap-0.${cluster_name}.${cluster_basedomain}:6443;
-${expanded_masters}
+        %{ for i in c_m ~}
+        server master-${i}.${cluster_name}.${cluster_basedomain}:6443;
+        %{ endfor }
     }
 
     server {
@@ -11,7 +13,9 @@ ${expanded_masters}
 
     upstream backend_mcs {
         server bootstrap-0.${cluster_name}.${cluster_basedomain}:22623;
-${expanded_mcs}
+        %{ for i in count_master ~}
+        server master-${i}.${cluster_name}.${cluster_basedomain}:22623;
+        %{ endfor }
     }
 
     server {
@@ -20,7 +24,9 @@ ${expanded_mcs}
     }
 
     upstream backend_https {
-${expanded_compute}
+        %{ for i in count_compute ~}
+        server worker-${i}.${cluster_name}.${cluster_basedomain}:443;
+        %{ endfor }
     }
 
     server {
