@@ -53,7 +53,7 @@ resource "null_resource" "reconfig_lb" {
   provisioner "file" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -64,7 +64,7 @@ resource "null_resource" "reconfig_lb" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
