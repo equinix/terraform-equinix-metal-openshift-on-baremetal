@@ -19,7 +19,7 @@ resource "packet_device" "bootstrap" {
   depends_on         = [var.depends]
   hostname           = "${format("bootstrap-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
   operating_system   = "custom_ipxe"
-  ipxe_script_url    = "http://shifti.us/ipxe/?ep=${var.bastion_ip}&node=bootstrap"
+  ipxe_script_url    = "http://${var.bastion_ip}/bootstrap.ipxe"
   plan               = "${var.plan}"
   facilities         = ["${var.facility}"]
   count              = "${var.node_count}"
