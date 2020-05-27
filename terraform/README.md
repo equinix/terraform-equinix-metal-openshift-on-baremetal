@@ -13,7 +13,7 @@ sudo mv terraform /usr/local/bin/
 ```
 ### Additional requirements
 
-`local-exec` provisioners require the use of:
+Currently the execution environment is [limited to Linux](https://github.com/RedHatSI/openshift-packet-deploy/issues/17). `local-exec` provisioners require the use of:
   - `curl`
   - `jq`
 
