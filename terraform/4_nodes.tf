@@ -27,6 +27,6 @@ module "openshift_workers" {
   cf_zone_id           = var.cf_zone_id
   bastion_ip           = module.bastion.nginx_ip
   node_type            = "worker"
-  depends              = [module.openshift_masters.node_ip]
+  depends              = [module.bootstrap_openshift.bootstrap_ip]
 }
 
