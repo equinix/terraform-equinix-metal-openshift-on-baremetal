@@ -13,18 +13,19 @@ variable "depends" {
 
 resource "null_resource" "ocp_installer" {
   provisioner "local-exec" {
-    command = "${path.module}/scripts/get-ocp-installer.sh ${path.root} ${var.ocp_version}"
+    command = "${path.module}/scripts/get-ocp-installer.sh ${abspath(path.root)} ${var.ocp_version}"
   }
 }
 
 resource "null_resource" "ocp_pullsecret" {
+  depends_on = [null_resource.ocp_installer]
   provisioner "local-exec" {
     command = "${path.module}/scripts/get-pull-secret.sh > ${path.root}/artifacts/pullsecret.json"
   }
 }
 
 data "template_file" "installer_config" {
-  depends_on = [null_resource.ocp_pullsecret]
+  depends_on = [null_resource.ocp_pullsecret, null_resource.ocp_installer]
   template = "${file("${path.module}/install-config.yaml.tpl")}"
   vars = {
     cluster_name         = var.cluster_name
@@ -65,7 +66,7 @@ resource "null_resource" "ocp_install_manifests" {
 
 output "finished" {
     depends_on = [null_resource.ocp_install_manifests]
-    value      = "OpenShift manifest and ignition creation finshed"
+    value      = "OpenShift manifest and ignition creation finshed. Bastion IP: ${var.bastion_ip}"
 }
 
 
