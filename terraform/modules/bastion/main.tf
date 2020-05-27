@@ -7,7 +7,8 @@ variable "ssh_private_key_path" {}
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
 variable "cf_zone_id" {}
-
+variable "ocp_version" {}
+variable "ocp_version_zstream" {}
 variable "nodes" {
   description = "Generic list of OpenShift node types"
   type        = list(string)
@@ -38,8 +39,10 @@ data "template_file" "ipxe_script" {
   template   = file("${path.module}/templates/ipxe.tpl")
 
   vars = {
-    node_type  = each.value
-    bastion_ip = packet_device.nginx.access_public_ipv4 
+    node_type           = each.value
+    bastion_ip          = packet_device.nginx.access_public_ipv4 
+    ocp_version         = var.ocp_version
+    ocp_version_zstream = var.ocp_version_zstream
   }
 }
 
@@ -115,16 +118,16 @@ provisioner "file" {
   destination = "/usr/share/nginx/html/worker.ign"
 }
 
-provisioner "file" {
-
-  connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
-    host        = packet_device.nginx.access_public_ipv4
-  }
-
-  content       = data.template_file.nginx_lb.rendered
-  destination = "/usr/share/nginx/modules/nginx-lb.conf"
-}
+//provisioner "file" {
+//
+//  connection {
+//    private_key = "${file("${var.ssh_private_key_path}")}"
+//    host        = packet_device.nginx.access_public_ipv4
+//  }
+//
+//  content       = data.template_file.nginx_lb.rendered
+//  destination = "/usr/share/nginx/modules/nginx-lb.conf"
+//}
 
 provisioner "remote-exec" {
 

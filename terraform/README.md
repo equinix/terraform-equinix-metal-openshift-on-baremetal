@@ -25,14 +25,11 @@ git clone https://github.com/RedHatSI/openshift-packet-deploy.git
 cd openshift-packet-deploy/terraform
 ```
 
-## Initialize Terraform
-Terraform uses modules to deploy infrastructure. In order to initialize the modules your simply run: `terraform init`. This should download modules into a hidden directory `.terraform`
-
-
 ## Usage
 
-  1. Configure an API token for your account/project
-  2. Configure TF_VARs applicable to your Packet project using 
+  1. Configure and obtain an [API token for your Packet account/project](https://www.packet.com/developers/api/) and [CloudFlare API token & zone ID details](https://dash.cloudflare.com/)
+  
+  2. Configure TF_VARs applicable to your Packet project and CloudFlare zone:
      ```bash
      export TF_VAR_project_id="kajs886-l59-8488-19910kj"
      export TF_VAR_project_name="automated-openshift-work"
@@ -44,13 +41,13 @@ Terraform uses modules to deploy infrastructure. In order to initialize the modu
      export TF_VAR_cf_zone_id="706767511sf7377900"
      ```
 
-  3. Initialize and validate terraform
+  3. Initialize and validate terraform:
      ```bash
      terraform init
      terraform validate
      ```
 
-  5. Apply the remaining resources:
+  5. Provision all resources and start the installation. This process takes between 30 and 50 minutes:
      ```bash
      terraform apply
      ``` 

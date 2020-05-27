@@ -1,9 +1,11 @@
 data "external" "kubeadmin_password" {
-  program = ["/bin/bash", "-c", "[ -f \"artifacts/install/auth/kubeadmin-password\" ] && echo \"{\\\"password\\\":\\\"$(cat artifacts/install/auth/kubeadmin-password)\\\"}\""]
+  depends_on = [module.openshift_install.finished]
+  program    = ["/bin/bash", "-c", "[ -f \"artifacts/install/auth/kubeadmin-password\" ] && echo \"{\\\"password\\\":\\\"$(cat artifacts/install/auth/kubeadmin-password)\\\"}\""]
 }
 
 output "Information" {
-  value = <<EOT
+  depends_on = [module.openshift_install.finished]
+  value      = <<EOT
 
 
   OpenShift cluster deployed.
