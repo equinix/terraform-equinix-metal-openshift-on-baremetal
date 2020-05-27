@@ -1,5 +1,6 @@
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
+variable "ocp_version" {}
 variable "ssh_public_key_path" {}
 variable "count_master" {}
 variable "count_compute" {}
@@ -12,7 +13,7 @@ variable "depends" {
 
 resource "null_resource" "ocp_installer" {
   provisioner "local-exec" {
-    command = "${path.module}/scripts/get-ocp-installer.sh ${path.root}"
+    command = "${path.module}/scripts/get-ocp-installer.sh ${path.root} ${var.ocp_version}"
   }
 }
 

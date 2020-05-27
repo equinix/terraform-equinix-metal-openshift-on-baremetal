@@ -17,7 +17,8 @@ variable "depends" {
 resource "packet_device" "node" {
   hostname           = "${format("${var.node_type}-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
   operating_system   = "custom_ipxe"
-  ipxe_script_url    = "http://shifti.us/ipxe/?ep=${var.bastion_ip}&node=${var.node_type}"
+  ipxe_script_url    = "http://${var.bastion_ip}/${var.node_type}.ipxe"
+  //ipxe_script_url    = "http://shifti.us/ipxe/?ep=${var.bastion_ip}&node=${var.node_type}"
   plan               = "${var.plan}"
   facilities         = ["${var.facility}"]
   count              = "${var.node_count}"
@@ -25,7 +26,6 @@ resource "packet_device" "node" {
   billing_cycle    = "hourly"
   project_id       = "${var.project_id}"
 
-  //user_data        = "${file("${path.root}/artifacts/bootstrap.ign")}"
 }
 
 resource "cloudflare_record" "dns_a_node" {
