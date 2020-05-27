@@ -115,7 +115,7 @@ resource "null_resource" "reconfig_nfs_exports" {
   provisioner "file" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -126,7 +126,7 @@ resource "null_resource" "reconfig_nfs_exports" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -143,7 +143,7 @@ resource "null_resource" "ocp_bootstrap_cleanup" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 

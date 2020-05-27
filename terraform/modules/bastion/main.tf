@@ -66,7 +66,7 @@ resource "null_resource" "dircheck" {
 provisioner "remote-exec" {
 
   connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
+    private_key = file(var.ssh_private_key_path)
     host        = packet_device.nginx.access_public_ipv4
   }
 
@@ -89,7 +89,7 @@ resource "null_resource" "file_uploads" {
 provisioner "file" {
 
   connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
+    private_key = file(var.ssh_private_key_path)
     host        = packet_device.nginx.access_public_ipv4
   }
 
@@ -100,7 +100,7 @@ provisioner "file" {
 provisioner "file" {
 
   connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
+    private_key = file(var.ssh_private_key_path)
     host        = packet_device.nginx.access_public_ipv4
   }
 
@@ -111,7 +111,7 @@ provisioner "file" {
 provisioner "file" {
 
   connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
+    private_key = file(var.ssh_private_key_path)
     host        = packet_device.nginx.access_public_ipv4
   }
 
@@ -122,7 +122,7 @@ provisioner "file" {
 //provisioner "file" {
 //
 //  connection {
-//    private_key = "${file("${var.ssh_private_key_path}")}"
+//    private_key = file(var.ssh_private_key_path)
 //    host        = packet_device.nginx.access_public_ipv4
 //  }
 //
@@ -133,7 +133,7 @@ provisioner "file" {
 provisioner "remote-exec" {
 
   connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
+    private_key = file(var.ssh_private_key_path)
     host        = packet_device.nginx.access_public_ipv4
   }
 
@@ -153,7 +153,7 @@ resource "null_resource" "ipxe_files" {
   provisioner "file" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = packet_device.nginx.access_public_ipv4
     }
 
@@ -164,7 +164,7 @@ resource "null_resource" "ipxe_files" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = packet_device.nginx.access_public_ipv4
     }
 

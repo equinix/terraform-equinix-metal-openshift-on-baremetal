@@ -32,12 +32,10 @@ cd openshift-packet-deploy/terraform
   2. Configure TF_VARs applicable to your Packet project and CloudFlare zone:
      ```bash
      export TF_VAR_project_id="kajs886-l59-8488-19910kj"
-     export TF_VAR_project_name="automated-openshift-work"
      export TF_VAR_auth_token="lka6702KAmVAP8957Abny01051"
-
+     
      export TF_VAR_cf_email="yourcfmail@domain.com"
      export TF_VAR_cf_api_key="21df29762169c002ca656"
-     export TF_VAR_cf_acct_id="cdafa76r7574576565658ae"
      export TF_VAR_cf_zone_id="706767511sf7377900"
      ```
 
