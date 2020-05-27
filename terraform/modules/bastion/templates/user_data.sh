@@ -12,4 +12,5 @@ systemctl start nfs-server.service
 
 mkdir -p /mnt/nfs/ocp
 
-
+nmcli connection modify bond0 ipv4.dns "1.1.1.1,8.8.8.8"
+systemctl restart NetworkManager

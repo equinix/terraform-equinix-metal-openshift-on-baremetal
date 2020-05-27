@@ -11,7 +11,7 @@ module "openshift_masters" {
   cf_zone_id           = var.cf_zone_id
   bastion_ip           = module.bastion.nginx_ip
   node_type            = "master"
-  depends              = [module.bootstrap_openshift.finished]
+  depends              = [module.bootstrap_openshift.bootstrap_ip]
 }
 
 module "openshift_workers" {
@@ -27,6 +27,6 @@ module "openshift_workers" {
   cf_zone_id           = var.cf_zone_id
   bastion_ip           = module.bastion.nginx_ip
   node_type            = "worker"
-  depends              = [module.openshift_masters.finished]
+  depends              = [module.bootstrap_openshift.bootstrap_ip]
 }
 

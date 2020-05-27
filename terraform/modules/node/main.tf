@@ -15,6 +15,7 @@ variable "depends" {
 
 
 resource "packet_device" "node" {
+  depends_on         = [var.depends]
   hostname           = "${format("${var.node_type}-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
   operating_system   = "custom_ipxe"
   ipxe_script_url    = "http://${var.bastion_ip}/${var.node_type}.ipxe"

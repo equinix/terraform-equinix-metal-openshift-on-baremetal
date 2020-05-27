@@ -19,7 +19,7 @@ resource "packet_device" "bootstrap" {
   depends_on         = [var.depends]
   hostname           = "${format("bootstrap-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
   operating_system   = "custom_ipxe"
-  ipxe_script_url    = "http://shifti.us/ipxe/?ep=${var.bastion_ip}&node=bootstrap"
+  ipxe_script_url    = "http://${var.bastion_ip}/bootstrap.ipxe"
   plan               = "${var.plan}"
   facilities         = ["${var.facility}"]
   count              = "${var.node_count}"
@@ -57,7 +57,7 @@ locals {
 }
 
 data "template_file" "nginx_lb" {
-    template = file("${path.module}/templates/nginx-lb.conf.tpl")
+    template   = file("${path.module}/templates/nginx-lb.conf.tpl")
 
   vars = {
     cluster_name         = var.cluster_name
@@ -96,38 +96,7 @@ resource "null_resource" "check_dir" {
   }
 }
 
-
-resource "null_resource" "reconfig_lb" {
-
-  depends_on = [ null_resource.check_dir ]
-
-provisioner "file" {
-
-  connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
-    host        = var.bastion_ip
-  }
-
-  content       = data.template_file.nginx_lb.rendered
-  destination = "/usr/share/nginx/modules/nginx-lb.conf"
-}
-
-provisioner "remote-exec" {
-
-  connection {
-    private_key = "${file("${var.ssh_private_key_path}")}"
-    host        = var.bastion_ip
-  }
-
-
-  inline = [
-    "systemctl restart nginx"
-  ]
-}
-
-}
-
 output "finished" {
-    depends_on = [null_resource.reconfig_lb]
+    depends_on = [null_resource.check_dir]
     value      = "Bootstrap node provisioning finished."
 }
