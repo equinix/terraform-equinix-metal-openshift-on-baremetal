@@ -48,7 +48,7 @@ data "template_file" "nginx_lb" {
 
 resource "null_resource" "reconfig_lb" {
 
-  depends_on = [ var.depends, null_resource.ocp_installer_wait_for_bootstrap ]
+  depends_on = [ var.depends ]
 
   provisioner "file" {
 
