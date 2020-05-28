@@ -7,8 +7,9 @@ module "openshift_install" {
   count_compute        = var.count_compute
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
-
+  bootstrap_ip         = module.bootstrap_openshift.bootstrap_ip
+  master_ips           = module.openshift_masters.node_ip
+  worker_ips           = module.openshift_workers.node_ip
   depends              = [module.openshift_masters.node_ip]
-
 }
 

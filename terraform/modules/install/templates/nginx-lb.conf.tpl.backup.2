@@ -1,6 +1,6 @@
 stream {
     upstream backend_api {
-        server ${bootstrap_ip}:6443;
+        server bootstrap-0.${cluster_name}.${cluster_basedomain}:6443;
 ${expanded_masters}
     }
 
@@ -10,7 +10,7 @@ ${expanded_masters}
     }
 
     upstream backend_mcs {
-        server ${bootstrap_ip}:6443;
+        server bootstrap-0.${cluster_name}.${cluster_basedomain}:22623;
 ${expanded_mcs}
     }
 
