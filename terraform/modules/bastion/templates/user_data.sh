@@ -11,6 +11,7 @@ systemctl enable nfs-server.service
 systemctl start nfs-server.service
 
 mkdir -p /mnt/nfs/ocp
+chmod -R 777 /mnt/nfs/ocp
 
 sed -i '/^nameserver/d' /etc/resolv.conf
 #nmcli connection modify bond0 ipv4.dns "1.1.1.1,8.8.8.8"

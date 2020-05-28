@@ -35,7 +35,7 @@ variable "ssh_public_key_path" {
 
 variable "facility" {
   description = "Your primary facility"
-  default     = "iad2"
+  default     = "dfw2"
 }
 
 variable "plan_master" {
@@ -59,7 +59,7 @@ variable "count_compute" {
 }
 
 variable "cluster_name" {
-  default = "packet"
+  default = "jr"
   description = "Cluster name label"
 }
 

@@ -70,7 +70,7 @@ data "template_file" "nginx_lb" {
   }
 
 }
-*/
+
 resource "null_resource" "check_port" {
 
   depends_on = [ cloudflare_record.dns_a_bootstrap ]

@@ -62,6 +62,26 @@ resource "cloudflare_record" "dns_srv_etcd" {
 
 }
 
+resource "null_resource" "bastion_etc_hosts" {
+
+  depends_on = [ cloudflare_record.dns_a_node ]
+  count      = "${var.node_count}"
+
+  provisioner "remote-exec" {
+
+    connection {
+      private_key = "${file("${var.ssh_private_key_path}")}"
+      host        = var.bastion_ip
+    }
+
+
+    inline = [
+      "echo '${packet_device.node[count.index].access_public_ipv4}  ${var.node_type}-${count.index}.${var.cluster_name}.${var.cluster_basedomain}' >> /etc/hosts"
+    ]
+  }
+
+}
+
 output "finished" {
   value      = "Provisioning node type ${var.node_type} finished."
 }
