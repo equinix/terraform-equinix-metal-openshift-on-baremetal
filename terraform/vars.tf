@@ -11,7 +11,6 @@ variable "cf_zone_id" {
 }
 
 variable "cluster_basedomain" {
-  default     = "codhill.dev"
   description = "Your Cloudflare Base domain for your cluster"
 }
 
