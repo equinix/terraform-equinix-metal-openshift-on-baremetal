@@ -17,25 +17,24 @@ variable "depends" {
 
 resource "packet_device" "bootstrap" {
   depends_on         = [var.depends]
-  hostname           = "${format("bootstrap-%01d.${var.cluster_name}.${var.cluster_basedomain}", count.index)}"
+  hostname           = format("bootstrap-%01d.%s.%s", count.index, var.cluster_name, var.cluster_basedomain)
   operating_system   = "custom_ipxe"
   ipxe_script_url    = "http://${var.bastion_ip}/bootstrap.ipxe"
-  plan               = "${var.plan}"
-  facilities         = ["${var.facility}"]
-  count              = "${var.node_count}"
-
+  plan               = var.plan
+  facilities         = [var.facility]
+  count              = var.node_count
   billing_cycle    = "hourly"
-  project_id       = "${var.project_id}"
+  project_id       = var.project_id
 
-  //user_data        = "${file("${path.root}/artifacts/bootstrap.ign")}"
+  //user_data        = file("${path.root}/artifacts/bootstrap.ign")
 }
 
 resource "cloudflare_record" "dns_a_bootstrap" {
-  zone_id    = "${var.cf_zone_id}"
+  zone_id    = var.cf_zone_id
   type       = "A"
   name       = "bootstrap-${count.index}.${var.cluster_name}.${var.cluster_basedomain}"
-  value      = "${packet_device.bootstrap[count.index].access_public_ipv4}"
-  count      = "${var.node_count}"
+  value      = packet_device.bootstrap[count.index].access_public_ipv4
+  count      = var.node_count
 }
 
 locals {
@@ -56,6 +55,7 @@ locals {
   EOT
 }
 
+/*
 data "template_file" "nginx_lb" {
     template   = file("${path.module}/templates/nginx-lb.conf.tpl")
 
@@ -70,7 +70,7 @@ data "template_file" "nginx_lb" {
   }
 
 }
-
+*/
 resource "null_resource" "check_port" {
 
   depends_on = [ cloudflare_record.dns_a_bootstrap ]
@@ -85,7 +85,7 @@ resource "null_resource" "check_dir" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     } 
 
@@ -95,8 +95,38 @@ resource "null_resource" "check_dir" {
     ]
   }
 }
+/*
+resource "null_resource" "reconfig_lb" {
 
+  depends_on = [ null_resource.check_dir, var.depends ]
+
+  provisioner "file" {
+
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = var.bastion_ip
+    }
+
+    content       = data.template_file.nginx_lb.rendered
+    destination = "/usr/share/nginx/modules/nginx-lb.conf"
+  }
+
+  provisioner "remote-exec" {
+
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = var.bastion_ip
+    }
+
+
+    inline = [
+      "systemctl restart nginx"
+    ]
+  }
+}
+*/
 output "finished" {
     depends_on = [null_resource.check_dir]
     value      = "Bootstrap node provisioning finished."
 }
+

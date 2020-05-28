@@ -10,6 +10,11 @@ variable "cf_zone_id" {
   description = "Your Cloudflare Zone"
 }
 
+variable "cluster_basedomain" {
+  description = "Your Cloudflare Base domain for your cluster"
+}
+
+
 variable "auth_token" {
   description = "Your Packet API key"
 }
@@ -56,11 +61,6 @@ variable "count_compute" {
 variable "cluster_name" {
   default = "packet"
   description = "Cluster name label"
-}
-
-variable "cluster_basedomain" {
-  default     = "ocp.shifti.us"
-  description = "Base domain for your cluster"
 }
 
 variable "ocp_version" {

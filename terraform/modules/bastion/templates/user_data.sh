@@ -12,5 +12,8 @@ systemctl start nfs-server.service
 
 mkdir -p /mnt/nfs/ocp
 
-nmcli connection modify bond0 ipv4.dns "1.1.1.1,8.8.8.8"
-systemctl restart NetworkManager
+sed -i '/^nameserver/d' /etc/resolv.conf
+#nmcli connection modify bond0 ipv4.dns "1.1.1.1,8.8.8.8"
+echo "nameserver=1.1.1.1" >> /etc/resolv.conf
+echo "nameserver=8.8.8.8" >> /etc/resolv.conf
+

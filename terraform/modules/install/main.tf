@@ -10,23 +10,32 @@ variable "count_compute" {}
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
 
+variable "bootstrap_ip" {
+  type = list
+}
+variable "master_ips" {
+  type = list
+}
+variable "worker_ips" {
+  type = list
+}
 
 
 locals {
   expanded_masters = <<-EOT
-        %{ for i in range(var.count_master) ~}
-        server master-${i}.${var.cluster_name}.${var.cluster_basedomain}:6443;
-        %{ endfor }
+        %{ for i in range(length(var.master_ips)) ~} 
+        server ${element(var.master_ips, i)}:6443; 
+        %{ endfor ~}
   EOT
   expanded_mcs = <<-EOT
-        %{ for i in range(var.count_master) ~}
-        server master-${i}.${var.cluster_name}.${var.cluster_basedomain}:22623;
-        %{ endfor }
+        %{ for i in range(length(var.master_ips)) ~} 
+        server ${element(var.master_ips, i)}:22623; 
+        %{ endfor ~}
   EOT
   expanded_compute = <<-EOT
-        %{ for i in range(var.count_compute) ~}
-        server worker-${i}.${var.cluster_name}.${var.cluster_basedomain}:443;
-        %{ endfor }
+        %{ for i in range(length(var.worker_ips)) ~}
+        server ${element(var.worker_ips, i)}:433; 
+        %{ endfor ~}
   EOT
 }
 
@@ -35,13 +44,10 @@ data "template_file" "nginx_lb" {
     template   = file("${path.module}/templates/nginx-lb.conf.tpl")
 
   vars = {
-    cluster_name         = var.cluster_name
-    cluster_basedomain   = var.cluster_basedomain
-    count_master         = var.count_master
-    count_compute        = var.count_compute
     expanded_masters     = local.expanded_masters
     expanded_compute     = local.expanded_compute
     expanded_mcs         = local.expanded_mcs
+    bootstrap_ip         = element(var.bootstrap_ip, 0)
   }
 
 }
@@ -53,7 +59,7 @@ resource "null_resource" "reconfig_lb" {
   provisioner "file" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -64,7 +70,7 @@ resource "null_resource" "reconfig_lb" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -115,7 +121,7 @@ resource "null_resource" "reconfig_nfs_exports" {
   provisioner "file" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -126,7 +132,7 @@ resource "null_resource" "reconfig_nfs_exports" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
@@ -143,7 +149,7 @@ resource "null_resource" "ocp_bootstrap_cleanup" {
   provisioner "remote-exec" {
 
     connection {
-      private_key = "${file("${var.ssh_private_key_path}")}"
+      private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
