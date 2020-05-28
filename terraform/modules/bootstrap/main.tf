@@ -71,6 +71,26 @@ data "template_file" "nginx_lb" {
 
 }
 
+resource "null_resource" "bastion_etc_hosts" {
+
+  depends_on = [ cloudflare_record.dns_a_bootstrap ]
+  count      = "${var.node_count}"
+
+  provisioner "remote-exec" {
+
+    connection {
+      private_key = "${file("${var.ssh_private_key_path}")}"
+      host        = var.bastion_ip
+    }
+
+
+    inline = [
+      "echo \"${packet_device.bootstrap[count.index].access_public_ipv4}  bootstrap-${count.index}.${var.cluster_name}.${var.cluster_basedomain}\" >> /etc/hosts"
+    ]
+  }
+
+}
+
 resource "null_resource" "check_port" {
 
   depends_on = [ cloudflare_record.dns_a_bootstrap ]
