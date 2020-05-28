@@ -190,30 +190,9 @@ resource "null_resource" "ocp_nfs_provisioner" {
 
   depends_on = [ null_resource.ocp_installer_wait_for_completion ]
 
-  // Move to template/script (done already)
-  // nfs-provisioner.sh /home/liveaverage/openshift-packet-deploy/terraform 139.178.88.15
   provisioner "local-exec" {
-  command    = <<EOT
-    source ${path.root}/artifacts/install/auth/kubeconfig;
-    curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/rbac.yaml > ${path.root}/artifacts/install/nfsp-rbac.yaml
-    curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/deployment.yaml > ${path.root}/artifacts/install/nfsp-deployment.yaml
-    curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/class.yaml > ${path.root}/artifacts/install/nfsp-class.yaml
-    export oc=${path.root}/artifacts/oc
-    $oc create namespace openshift-nfs-storage
-    $oc label namespace openshift-nfs-storage "openshift.io/cluster-monitoring=true"
-    NAMESPACE=`$oc project openshift-nfs-storage -q`
-    sed -i'' "s/namespace:.*/namespace: $NAMESPACE/g" ${path.root}/artifacts/install/nfsp-rbac.yaml
-    sed -i'' "s/namespace:.*/namespace: $NAMESPACE/g" ${path.root}/artifacts/install/nfsp-deployment.yaml
-    sed -i'' "s/10.10.10.60/${var.bastion_ip}/g" ${path.root}/artifacts/install/nfsp-deployment.yaml
-    sed -i'' "s/fuseim.*/storage.io\/nfs/g" ${path.root}/artifacts/install/nfsp-deployment.yaml
-    sed -i'' "s/\/var\/nfs/\/mnt\/nfs\/ocp/g" ${path.root}/artifacts/install/nfsp-deployment.yaml
-    sed -i'' "s/fuseim.*/storage.io\/nfs/g" ${path.root}/artifacts/install/nfsp-deployment.yaml
-    sed -i'' "s/fuseim.*/storage.io\/nfs/g" ${path.root}/artifacts/install/nfsp-class.yaml
-    $oc create -f ${path.root}/artifacts/install/nfsp-rbac.yaml
-    $oc adm policy add-scc-to-user hostmount-anyuid system:serviceaccount:$NAMESPACE:nfs-client-provisioner
-    $oc create -f ${path.root}/artifacts/install/nfsp-class.yaml
-    $oc create -f ${path.root}/artifacts/install/nfsp-deployment.yaml
-  EOT
+  command    = "${path.module}/scripts/nfs-provisioner.sh ${abspath(path.root)} ${var.bastion_ip}"
+  
   }
 }
 
