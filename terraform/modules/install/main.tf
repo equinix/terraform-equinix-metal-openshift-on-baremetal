@@ -34,7 +34,7 @@ locals {
   EOT
   expanded_compute = <<-EOT
         %{ for i in range(length(var.worker_ips)) ~}
-        server ${element(var.worker_ips, i)}:433; 
+        server ${element(var.worker_ips, i)}:443; 
         %{ endfor ~}
   EOT
 }
@@ -97,12 +97,12 @@ resource "null_resource" "ocp_installer_wait_for_bootstrap" {
 locals {
   expanded_masters_nfs = <<-EOT
     %{ for i in range(var.count_master) ~}
-    /mnt/nfs/ocp  master-${i}.${var.cluster_name}.${var.cluster_basedomain}(rw,sync)
+    /mnt/nfs/ocp  master-${i}.${var.cluster_name}.${var.cluster_basedomain}(rw,no_root_squash)
     %{ endfor }
   EOT
   expanded_compute_nfs = <<-EOT
     %{ for i in range(var.count_compute) ~}
-    /mnt/nfs/ocp  worker-${i}.${var.cluster_name}.${var.cluster_basedomain}(rw,sync)
+    /mnt/nfs/ocp  worker-${i}.${var.cluster_name}.${var.cluster_basedomain}(rw,no_root_squash)
     %{ endfor }
   EOT
 }
@@ -172,18 +172,30 @@ resource "null_resource" "ocp_installer_wait_for_completion" {
   }
 }
 
-//resource "null_resource" "ocp_approve_pending_csrs" {
-//
-//  depends_on = [ null_resource.ocp_installer_wait_for_completion ]
-//
-//  provisioner "local-exec" {
-//  command    = <<EOT
-//    source ${path.root}/artifacts/install/auth/kubeconfig;
-//    while [ ! -f ${path.root}/artifacts/install/auth/kubeconfig ]; do sleep 2; done;
-//    ${path.root}/artifacts/openshift-install --dir ${path.root}/artifacts/install wait-for install-complete;
-//  EOT
-//  }
-//}
+resource "null_resource" "ocp_approve_pending_csrs" {
+
+  depends_on = [ null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup ]
+
+  provisioner "local-exec" {
+  command    = <<EOT
+    while [ ! -f ${path.root}/artifacts/install/auth/kubeconfig ]; do sleep 2; done;
+    source ${path.root}/artifacts/install/auth/kubeconfig;
+    export oc=${path.root}/artifacts/oc
+    while ($oc get csr | grep -q -i Pending); do echo "Still seeing Pending CSRs"; ($oc get csr -oname | xargs $oc adm certificate approve); sleep 35; done
+  EOT
+  }
+}
+
+resource "null_resource" "ocp_nfs_provisioner" {
+
+  depends_on = [ null_resource.ocp_installer_wait_for_completion ]
+
+  provisioner "local-exec" {
+  command    = "${path.module}/scripts/nfs-provisioner.sh ${abspath(path.root)} ${var.bastion_ip}"
+  
+  }
+}
+
 
 output "finished" {
     depends_on = [null_resource.ocp_install_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup, null_resource.ocp_installer_wait_for_completion ]
