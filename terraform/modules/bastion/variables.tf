@@ -22,7 +22,7 @@ variable "billing_cycle" {
 
 variable "plan"{
     description = "The server type to deploy"
-    default = "c3.medium.x86"
+    default = "c2.medium.x86"
     type = string
 }
 

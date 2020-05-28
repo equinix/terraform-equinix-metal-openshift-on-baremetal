@@ -55,6 +55,7 @@ locals {
   EOT
 }
 
+/*
 data "template_file" "nginx_lb" {
     template   = file("${path.module}/templates/nginx-lb.conf.tpl")
 
@@ -69,7 +70,7 @@ data "template_file" "nginx_lb" {
   }
 
 }
-
+*/
 resource "null_resource" "check_port" {
 
   depends_on = [ cloudflare_record.dns_a_bootstrap ]
@@ -94,37 +95,36 @@ resource "null_resource" "check_dir" {
     ]
   }
 }
-
+/*
 resource "null_resource" "reconfig_lb" {
 
-  depends_on = [ null_resource.check_dir ]
+  depends_on = [ null_resource.check_dir, var.depends ]
 
-provisioner "file" {
+  provisioner "file" {
 
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = var.bastion_ip
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = var.bastion_ip
+    }
+
+    content       = data.template_file.nginx_lb.rendered
+    destination = "/usr/share/nginx/modules/nginx-lb.conf"
   }
 
-  content       = data.template_file.nginx_lb.rendered
-  destination = "/usr/share/nginx/modules/nginx-lb.conf"
-}
+  provisioner "remote-exec" {
 
-provisioner "remote-exec" {
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = var.bastion_ip
+    }
 
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = var.bastion_ip
+
+    inline = [
+      "systemctl restart nginx"
+    ]
   }
-
-
-  inline = [
-    "systemctl restart nginx"
-  ]
 }
-
-}
-
+*/
 output "finished" {
     depends_on = [null_resource.check_dir]
     value      = "Bootstrap node provisioning finished."
