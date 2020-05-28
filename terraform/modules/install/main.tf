@@ -34,7 +34,7 @@ locals {
   EOT
   expanded_compute = <<-EOT
         %{ for i in range(length(var.worker_ips)) ~}
-        server ${element(var.worker_ips, i)}:433; 
+        server ${element(var.worker_ips, i)}:443; 
         %{ endfor ~}
   EOT
 }
