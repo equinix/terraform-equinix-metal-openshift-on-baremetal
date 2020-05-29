@@ -19,7 +19,7 @@ resource "packet_device" "bootstrap" {
   depends_on         = [var.depends]
   hostname           = format("bootstrap-%01d.%s.%s", count.index, var.cluster_name, var.cluster_basedomain)
   operating_system   = "custom_ipxe"
-  ipxe_script_url    = "http://${var.bastion_ip}/bootstrap.ipxe"
+  ipxe_script_url    = "http://${var.bastion_ip}:8080/bootstrap.ipxe"
   plan               = var.plan
   facilities         = [var.facility]
   count              = var.node_count

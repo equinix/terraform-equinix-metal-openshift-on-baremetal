@@ -29,16 +29,19 @@ cd openshift-packet-deploy/terraform
 ## Usage
 
   1. Configure and obtain an [API token for your Packet account/project](https://www.packet.com/developers/api/) and [Cloudflare API token & zone ID details](https://dash.cloudflare.com/)
+  2. Obtain an OpenShift Cluster Manager API Token for pullSecret generation
   
-  2. Configure TF_VARs applicable to your Packet project and Cloudflare zone:
+  2. Configure TF_VARs applicable to your Packet project, Cloudflare zone, and OpenShift API Token:
      ```bash
      export TF_VAR_project_id="kajs886-l59-8488-19910kj"
      export TF_VAR_auth_token="lka6702KAmVAP8957Abny01051"
      
-     export TF_VAR_cluster_basedomain="domain.com"
      export TF_VAR_cf_email="yourcfmail@domain.com"
      export TF_VAR_cf_api_key="21df29762169c002ca656"
      export TF_VAR_cf_zone_id="706767511sf7377900"
+
+     export TF_VAR_cluster_basedomain="domain.com"
+     export TF_VAR_ocp_cluster_manager_token="eyJhbGc...d8Agva"
      ```
 
      2.1. Check to ensure you have an ssh key-pair located at ***~/.ssh/id_rsa*** and ***~/.ssh/id_rsa.pub*** respectively. If not you need to update both ***ssh_public_key_path*** and ***ssh_private_key_path***.

@@ -20,12 +20,22 @@ ${expanded_mcs}
     }
 
     upstream backend_https {
-${expanded_compute}
+${expanded_compute_https}
     }
 
     server {
         listen 443;
         proxy_pass backend_https;
     }
+
+    upstream backend_http {
+${expanded_compute_http}
+    }
+
+    server {
+        listen 80;
+        proxy_pass backend_http;
+    }
+
 }
 

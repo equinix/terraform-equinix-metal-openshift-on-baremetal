@@ -71,5 +71,8 @@ variable "ocp_version" {
 variable "ocp_version_zstream" {
   default = "3"
   description = "OpenShift zstream version"
+}
 
+variable "ocp_cluster_manager_token" {
+  description = "OpenShift Cluster Manager API Token used to generate your pullSecret (https://cloud.redhat.com/openshift/token)"
 }

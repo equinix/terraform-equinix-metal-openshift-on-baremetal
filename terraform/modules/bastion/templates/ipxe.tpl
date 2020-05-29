@@ -10,6 +10,6 @@ set first-boot coreos.first_boot=1
 set auto-login coreos.autologin
 set oem coreos.oem.id=packet
  
-kernel $${coreos-url}/rhcos-$${release}.$${zstream}-$${arch}-installer-kernel-$${arch} $${console} $${first-boot} $${auto-login} ip=dhcp nomodeset rd.neednet=1 initrd=rhcos-$${release}.$${zstream}-$${arch}-installer-initramfs.$${arch}.img coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=$${coreos-img} coreos.inst.ignition_url=http://${ bastion_ip }/${ node_type }.ign
+kernel $${coreos-url}/rhcos-$${release}.$${zstream}-$${arch}-installer-kernel-$${arch} $${console} $${first-boot} $${auto-login} ip=dhcp nomodeset rd.neednet=1 initrd=rhcos-$${release}.$${zstream}-$${arch}-installer-initramfs.$${arch}.img coreos.inst=yes coreos.inst.install_dev=sda coreos.inst.image_url=$${coreos-img} coreos.inst.ignition_url=http://${ bastion_ip }:8080/${ node_type }.ign
 initrd $${coreos-url}/rhcos-$${release}.$${zstream}-$${arch}-installer-initramfs.$${arch}.img
 boot

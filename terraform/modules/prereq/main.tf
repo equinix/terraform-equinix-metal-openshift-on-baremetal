@@ -5,7 +5,7 @@ variable "ssh_public_key_path" {}
 variable "count_master" {}
 variable "count_compute" {}
 variable "bastion_ip" {}
-
+variable "ocp_api_token" {}
 variable "depends" {
   type    = any
   default = null
@@ -20,7 +20,7 @@ resource "null_resource" "ocp_installer" {
 resource "null_resource" "ocp_pullsecret" {
   depends_on = [null_resource.ocp_installer]
   provisioner "local-exec" {
-    command = "${path.module}/scripts/get-pull-secret.sh > ${path.root}/artifacts/pullsecret.json"
+    command = "${path.module}/scripts/get-pull-secret.sh ${var.ocp_api_token} > ${path.root}/artifacts/pullsecret.json"
   }
 }
 
