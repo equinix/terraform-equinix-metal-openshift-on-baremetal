@@ -192,7 +192,7 @@ resource "null_resource" "ocp_nfs_provisioner" {
   depends_on = [ null_resource.ocp_installer_wait_for_completion ]
 
   provisioner "local-exec" {
-  command    = "${path.module}/scripts/nfs-provisioner.sh ${abspath(path.root)} ${var.bastion_ip}"
+  command    = "${path.module}/templates/nfs-provisioner.sh ${abspath(path.root)} ${var.bastion_ip}"
   
   }
 }
