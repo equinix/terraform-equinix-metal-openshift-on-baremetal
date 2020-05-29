@@ -179,7 +179,8 @@ resource "null_resource" "ocp_approve_pending_csrs" {
   provisioner "local-exec" {
   command    = <<EOT
     while [ ! -f ${path.root}/artifacts/install/auth/kubeconfig ]; do sleep 2; done;
-    source ${path.root}/artifacts/install/auth/kubeconfig;
+    sleep 180;
+    export KUBECONFIG=="${path.root}/artifacts/install/auth/kubeconfig";
     export oc=${path.root}/artifacts/oc
     while ($oc get csr | grep -q -i Pending); do echo "Still seeing Pending CSRs"; ($oc get csr -oname | xargs $oc adm certificate approve); sleep 35; done
   EOT

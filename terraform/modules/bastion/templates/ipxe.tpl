@@ -3,7 +3,7 @@
 set release ${ ocp_version }
 set zstream ${ ocp_version_zstream }
 set arch x86_64
-set coreos-url http://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/$${release}/$${release}.$${zstream}
+set coreos-url http://54.173.18.88/pub/openshift-v4/dependencies/rhcos/$${release}/$${release}.$${zstream}
 set coreos-img $${coreos-url}/rhcos-$${release}.$${zstream}-$${arch}-metal.$${arch}.raw.gz
 set console console=ttyS1,115200n8
 set first-boot coreos.first_boot=1
