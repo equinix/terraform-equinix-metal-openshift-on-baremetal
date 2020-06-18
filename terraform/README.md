@@ -59,6 +59,10 @@ cd openshift-packet-deploy/terraform
 
   6. Cleanup the boostrap node once provisioning and installation is complete
      ```bash
-     terraform destroy --target=module.bootstrap_openshift.packet_device.bootstrap[0]
+     terraform apply -var="count_bootstrap=0"
+     ```
+     If you need to obtain your `kubeadmin` credentials at a later time:
+     ```
+     terraform output
      ```
 

@@ -42,7 +42,7 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-nginx_ip = 139.178.89.181
+lb_ip = 139.178.89.181
 ```
 
 ## Variables

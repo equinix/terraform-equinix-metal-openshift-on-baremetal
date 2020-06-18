@@ -1,3 +1,3 @@
-output "nginx_ip" {
-    value = packet_device.nginx.access_public_ipv4
+output "lb_ip" {
+    value = packet_device.lb.access_public_ipv4
 }

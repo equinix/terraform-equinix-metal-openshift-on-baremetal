@@ -33,6 +33,11 @@ variable "ssh_public_key_path" {
   default     = "~/.ssh/id_rsa.pub"
 }
 
+variable "bastion_operating_system" {
+  description = "Your preferred bastion operating systems (RHEL or CentOS)"
+  default     = "rhel_7"
+}
+
 variable "facility" {
   description = "Your primary facility"
   default     = "dfw2"
@@ -40,12 +45,17 @@ variable "facility" {
 
 variable "plan_master" {
   description = "Plan for Master Nodes"
-  default     = "c2.medium.x86"
+  default     = "c3.medium.x86"
 }
 
 variable "plan_compute" {
   description = "Plan for Compute Nodes"
   default     = "c2.medium.x86"
+}
+
+variable "count_bootstrap" {
+  default     = "1"
+  description = "Number of Master Nodes."
 }
 
 variable "count_master" {
@@ -75,4 +85,18 @@ variable "ocp_version_zstream" {
 
 variable "ocp_cluster_manager_token" {
   description = "OpenShift Cluster Manager API Token used to generate your pullSecret (https://cloud.redhat.com/openshift/token)"
+}
+
+variable "ocp_storage_nfs_enable" {
+  description = "Enable configuration of NFS and NFS-related k8s provisioner/storageClass"
+  default     = true
+} 
+variable "ocp_storage_ocs_enable" {
+  description = "Enable installation of OpenShift Container Storage via operator. This requires a minimum of 3 worker nodes"
+  default     = false
+}
+
+variable "ocp_virtualization_enable" {
+  description = "Enable installation of OpenShift Virtualization via operator. This requires storage provided by OCS, NFS, and/or hostPath provisioner(s)"
+  default     = false
 }

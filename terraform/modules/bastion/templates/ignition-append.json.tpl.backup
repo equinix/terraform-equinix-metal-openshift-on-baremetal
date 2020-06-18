@@ -1,0 +1,49 @@
+{
+   "ignition": {
+      "config": {
+        "append": [
+          {
+            "source": "http://${ bastion_ip }:8080/${ node_type }.ign",
+            "verification": {}
+          }
+        ]
+    },
+    "security": {},
+    "timeouts": {},
+    "version": "2.2.0"
+   },
+   "storage": {
+      "files": [
+         {
+            "filesystem": "root",
+            "path": "/etc/dhcp/dhclient.conf",
+            "mode": 644,
+            "overwrite": true,
+            "contents": {
+               "source": "data:,send%20dhcp-client-identifier%20%3D%20hardware%3B%0Asupersede%20domain-name-servers%201.1.1.1%3B%0Asupersede%20domain-name-servers%208.8.8.8%3B"
+            }
+         },
+         {
+            "filesystem": "root",
+            "path": "/etc/NetworkManager/NetworkManager.conf",
+            "mode": 644,
+            "overwrite": true,
+            "contents": {
+               "source": "data:,%5Bmain%5D%0Adns%3Dnone%0A%5Blogging%5D%0A%0A"
+            }
+         },
+         { 
+            "filesystem": "root",
+            "path": "/etc/resolv.conf",
+            "mode": 644,
+            "overwrite": true,
+            "contents": {
+               "source": "data:,nameserver%201.1.1.1%0Anameserver%201.0.0.1%0A%0A"
+            }
+         }
+      ]
+   },
+  "networkd": {},
+  "passwd": {},
+  "systemd": {}
+}

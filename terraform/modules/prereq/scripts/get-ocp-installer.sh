@@ -18,3 +18,4 @@ fi
 cd $RDIR/artifacts;
 tar -xvzf openshift-install.tar.gz;
 tar -xvzf oc.tar.gz;
+cp oc /usr/local/bin/oc || true

@@ -20,4 +20,3 @@ controlPlane:
 platform:
   none: {}
 sshKey: '${trimspace(file("${ssh_public_key_path}"))}'
-pullSecret: '${trimspace(file("${pullsecret_path}"))}'

@@ -20,38 +20,48 @@ provider "packet" {
 }
 
 data "template_file" "user_data" { 
-    template = file("${path.module}/templates/user_data.sh")
-}
-
-data "template_file" "nginx_lb" {
-    template = file("${path.module}/templates/nginx-lb.conf.tpl")
-
-  vars = {
-    cluster_name         = var.cluster_name
-    cluster_basedomain   = var.cluster_basedomain
-  }
-
+    template = file("${path.module}/templates/user_data_${var.operating_system}.sh")
 }
 
 data "template_file" "ipxe_script" {
-  depends_on = [packet_device.nginx]
+  depends_on = [packet_device.lb]
   for_each   = toset(var.nodes)
   template   = file("${path.module}/templates/ipxe.tpl")
 
   vars = {
     node_type           = each.value
-    bastion_ip          = packet_device.nginx.access_public_ipv4 
+    bastion_ip          = packet_device.lb.access_public_ipv4 
     ocp_version         = var.ocp_version
     ocp_version_zstream = var.ocp_version_zstream
   }
 }
 
-output "ipxe" {
-  value = data.template_file.ipxe_script
+data "template_file" "ignition_append" {
+  depends_on = [packet_device.lb]
+  for_each   = toset(var.nodes)
+  template   = file("${path.module}/templates/ignition-append.json.tpl")
+
+  vars = {
+    node_type           = each.value
+    bastion_ip          = packet_device.lb.access_public_ipv4 
+    cluster_name        = var.cluster_name
+    cluster_basedomain  = var.cluster_basedomain
+  }
 }
 
-resource "packet_device" "nginx" {
-    hostname = "nginx.${var.cluster_name}.${var.cluster_basedomain}" 
+locals {
+  arch           = "x86_64"
+  coreos_baseurl = "http://54.172.173.155/pub/openshift-v4/dependencies/rhcos"
+  coreos_url     = "${local.coreos_baseurl}/${var.ocp_version}/${var.ocp_version}.${var.ocp_version_zstream}"
+  coreos_filenm  = "rhcos-${var.ocp_version}.${var.ocp_version_zstream}-${local.arch}"
+  coreos_img     = "${local.coreos_filenm}-metal.${local.arch}.raw.gz"
+  coreos_kernel  = "${local.coreos_filenm}-installer-kernel-${local.arch}"
+  coreos_initrd  = "${local.coreos_filenm}-installer-initramfs.${local.arch}.img"
+  
+}
+
+resource "packet_device" "lb" {
+    hostname = "lb-0.${var.cluster_name}.${var.cluster_basedomain}" 
     plan = var.plan
     facilities = [var.facility]
     operating_system = var.operating_system
@@ -63,87 +73,42 @@ resource "packet_device" "nginx" {
 
 resource "null_resource" "dircheck" {
 
-provisioner "remote-exec" {
+  provisioner "remote-exec" {
 
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = packet_device.nginx.access_public_ipv4
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = packet_device.lb.access_public_ipv4
+    }
+
+
+    inline = [
+      "while [ ! -d /usr/share/nginx/html ]; do sleep 2; done; ls /usr/share/nginx/html/",
+      "while [ ! -f /usr/lib/systemd/system/nfs-server.service ]; do sleep 2; done; ls /usr/lib/systemd/system/nfs-server.service"
+    ]
   }
-
-
-  inline = [
-    "while [ ! -d /usr/share/nginx/html ]; do sleep 2; done; ls /usr/share/nginx/html/",
-    "while [ ! -f /usr/lib/systemd/system/nfs-server.service ]; do sleep 2; done; ls /usr/lib/systemd/system/nfs-server.service"
-  ]
 }
 
-
-}
-
-//START OF NULL FILE RESOURCE
-
-resource "null_resource" "file_uploads" {
+resource "null_resource" "ocp_install_ignition" {
 
   depends_on = [null_resource.dircheck]
 
-provisioner "file" {
 
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = packet_device.nginx.access_public_ipv4
+  provisioner "remote-exec" {
+
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = packet_device.lb.access_public_ipv4
+    }
+
+
+    inline = [
+      "curl -o /usr/share/nginx/html/${local.coreos_img} ${local.coreos_url}/${local.coreos_img}",
+      "curl -o /usr/share/nginx/html/${local.coreos_kernel} ${local.coreos_url}/${local.coreos_kernel}",
+      "curl -o /usr/share/nginx/html/${local.coreos_initrd} ${local.coreos_url}/${local.coreos_initrd}",
+      "chmod -R 0755 /usr/share/nginx/html/"
+    ]
   }
-
-  source       = "${path.root}/artifacts/install/bootstrap.ign"
-  destination = "/usr/share/nginx/html/bootstrap.ign"
 }
-
-provisioner "file" {
-
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = packet_device.nginx.access_public_ipv4
-  }
-
-  source       = "${path.root}/artifacts/install/master.ign"
-  destination = "/usr/share/nginx/html/master.ign"
-}
-
-provisioner "file" {
-
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = packet_device.nginx.access_public_ipv4
-  }
-
-  source       = "${path.root}/artifacts/install/worker.ign"
-  destination = "/usr/share/nginx/html/worker.ign"
-}
-
-//provisioner "file" {
-//
-//  connection {
-//    private_key = file(var.ssh_private_key_path)
-//    host        = packet_device.nginx.access_public_ipv4
-//  }
-//
-//  content       = data.template_file.nginx_lb.rendered
-//  destination = "/usr/share/nginx/modules/nginx-lb.conf"
-//}
-
-provisioner "remote-exec" {
-
-  connection {
-    private_key = file(var.ssh_private_key_path)
-    host        = packet_device.nginx.access_public_ipv4
-  }
-
-
-  inline = [
-    "chmod -R 0755 /usr/share/nginx/html/",
-  ]
-}
-}
-//END OF NULL FILE RESOURCE
 
 resource "null_resource" "ipxe_files" {
 
@@ -154,7 +119,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = packet_device.nginx.access_public_ipv4
+      host        = packet_device.lb.access_public_ipv4
     }
 
     content       = each.value.rendered
@@ -165,7 +130,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = packet_device.nginx.access_public_ipv4
+      host        = packet_device.lb.access_public_ipv4
     }
 
 
@@ -175,29 +140,38 @@ resource "null_resource" "ipxe_files" {
   }
 }
 
-resource "cloudflare_record" "dns_a_cluster_api" {
-  zone_id    = var.cf_zone_id
-  type       = "A"
-  name       = "api.${var.cluster_name}.${var.cluster_basedomain}"
-  value      = packet_device.nginx.access_public_ipv4
-}
+resource "null_resource" "ignition_append_files" {
 
-resource "cloudflare_record" "dns_a_cluster_api_int" {
-  zone_id    = var.cf_zone_id
-  type       = "A"
-  name       = "api-int.${var.cluster_name}.${var.cluster_basedomain}"
-  value      = packet_device.nginx.access_public_ipv4
-}
+  depends_on = [null_resource.dircheck]  
+  for_each  = data.template_file.ignition_append
 
-resource "cloudflare_record" "dns_a_cluster_wildcard_https" {
-  zone_id    = var.cf_zone_id
-  type       = "A"
-  name       = "*.apps.${var.cluster_name}.${var.cluster_basedomain}"
-  value      = packet_device.nginx.access_public_ipv4
+  provisioner "file" {
+
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = packet_device.lb.access_public_ipv4
+    }
+
+    content       = each.value.rendered
+    destination = "/usr/share/nginx/html/${ each.key }-append.ign"
+  }
+
+  provisioner "remote-exec" {
+
+    connection {
+      private_key = file(var.ssh_private_key_path)
+      host        = packet_device.lb.access_public_ipv4
+    }
+
+
+    inline = [
+      "chmod -R 0755 /usr/share/nginx/html/",
+    ]
+  }
 }
 
 output "finished" {
     depends_on = [null_resource.file_uploads, null_resource.ipxe_files]
-    value      = "Nginx HTTP/LB provisioning finished."
+    value      = "Loadbalancer provisioning finished."
 }
 
