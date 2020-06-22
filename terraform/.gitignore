@@ -4,5 +4,5 @@
 terraform.tfstate*
 artifacts/
 auth/
-extras/quay
+
 
