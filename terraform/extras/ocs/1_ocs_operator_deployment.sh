@@ -4,7 +4,7 @@
 
 ### Create project and operator prereq's for OCS
 
-cat << EOF | oc create -f -
+cat << EOF | oc apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -31,16 +31,14 @@ metadata:
   name: ocs-operator
   namespace: openshift-storage
 spec:
-  channel: stable-4.3
+  channel: stable-4.4
   installPlanApproval: Automatic
   name: ocs-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: ocs-operator.v4.3.0
+  startingCSV: ocs-operator.v4.4.0
 EOF
 
 ### Sleep for 15s while Operator Subscription initializes
 echo "Waiting for 15s while the OCS Operator Initializes"
 sleep 15
-
-### Create OCS deployment

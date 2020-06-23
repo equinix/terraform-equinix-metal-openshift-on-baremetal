@@ -55,3 +55,9 @@ oc apply -f extras/cnv/1_cnv_operator_subscription.yaml
 oc apply -f extras/cnv/2_cnv_hostpath_provisioner.yaml
 ```
 
+# Troubleshooting
+
+## Packet
+
+If you encounter issues with a specific Packet host you may need to leverage Packet's *Out-of-Band Console* to troubleshoot. This is slightly difficult given CoreOS reverts the initial serial console target, which we configure as `console=ttyS1,115200n8` during *Custom iPXE* boot. After successful installation of CoreOS this is reverted to the default `console=ttyS0,115200n8`. While rebooting a host you can modify the kernel command line argument by hitting `e` when you see the grub menu entry for CoreOS. Change `ttyS0` to `ttyS1` and press `CTL+X` to continue booting.
+
