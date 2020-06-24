@@ -33,10 +33,10 @@ metadata:
     kubevirt.io/latest-observed-api-version: v1alpha3
     kubevirt.io/storage-observed-api-version: v1alpha3
     name.os.template.kubevirt.io/win2k16: Microsoft Windows Server 2016
-  name: eval
+  name: eval16
   namespace: packet-liveaverage
   labels:
-    app: eval
+    app: eval16
     flavor.template.kubevirt.io/large: 'true'
     os.template.kubevirt.io/win2k16: 'true'
     workload.template.kubevirt.io/server: 'true'
@@ -46,11 +46,11 @@ spec:
       kind: DataVolume
       metadata:
         creationTimestamp: null
-        name: eval-rootdisk
+        name: eval16-rootdisk
       spec:
         pvc:
           accessModes:
-            - ReadWriteOnce
+            - ReadWriteMany
           resources:
             requests:
               storage: 55Gi
@@ -66,10 +66,10 @@ spec:
       creationTimestamp: null
       labels:
         flavor.template.kubevirt.io/large: 'true'
-        kubevirt.io/domain: eval
+        kubevirt.io/domain: eval16
         kubevirt.io/size: large
         os.template.kubevirt.io/win2k16: 'true'
-        vm.kubevirt.io/name: eval
+        vm.kubevirt.io/name: eval16
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
@@ -93,9 +93,6 @@ spec:
               disk:
                 bus: virtio
               name: rootdisk
-            - cdrom:
-                bus: sata
-              name: windows-guest-tools
             - disk:
                 bus: virtio
               name: cloudinitdisk
@@ -117,18 +114,15 @@ spec:
           requests:
             memory: 8Gi
       evictionStrategy: LiveMigrate
-      hostname: eval
+      hostname: eval16
       networks:
         - name: nic0
           pod: {}
       terminationGracePeriodSeconds: 0
       volumes:
         - dataVolume:
-            name: eval-rootdisk
+            name: eval16-rootdisk
           name: rootdisk
-        - containerDisk:
-            image: registry.redhat.io/container-native-virtualization/virtio-win
-          name: windows-guest-tools
         - cloudInitNoCloud:
             userData: |
               #cloud-config
@@ -138,7 +132,7 @@ spec:
                   ssh-rsa
                   AAAAB3NzaC1yc2EAAAADAQABAAABAQDTcRiMEulKlNUqpy6Kb2wIAe6mKbdeZxUZIDll+MmcPa814fJIY0agGyFdQxQqgL1bQwU6e7OPD5IMsUIHeah0w3lWwxKZ7d4so/OE6BQVKmNOMepBygcr7EvQxkHC2kbp9wshc6m8rnuEnwKOr4nonwpKH6s4ok9Xf9IYimN4ovCQUYh9f0V7e1Y/KP9wqJqeWHZOpmICY+LTPi9JFGOT8aWEbFHHPvqYqzf0pJKrJnBreG6FBVCgam4ve/LbWql/1/nJDHY0V7dwBwopVXJUU27E68je70s7zYavsdZwESUmuhgG2cE0zM8rZY2ynZth+8AgtiHCgov88c2x9jSp
                   Public-SSH-Key
-              hostname: eval
+              hostname: eval16
           name: cloudinitdisk
 EOF
 
