@@ -30,8 +30,13 @@ spec:
   name: kubevirt-hyperconverged
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: kubevirt-hyperconverged-operator.v2.3.0
----
+EOF
+
+### Sleep for 15s while Operator Subscription initializes
+echo "Waiting for 20s while the Operator Initializes"
+sleep 20
+
+cat << EOF | oc apply -f -
 apiVersion: hco.kubevirt.io/v1alpha1
 kind: HyperConverged
 metadata:
