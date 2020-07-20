@@ -47,7 +47,7 @@ cd openshift-packet-deploy/terraform
 
 2. Follow [this](CLOUDFLARE.md) to configure your Cloudflare account and collect required parameters.
 
-3. Obtain an OpenShift Cluster Manager API Token for pullSecret generation
+3. [Obtain an OpenShift Cluster Manager API Token](https://cloud.redhat.com/openshift/token) for pullSecret generation.
   
 4. Configure TF_VARs applicable to your Packet project, Cloudflare zone, and OpenShift API Token:
      ```bash
@@ -73,7 +73,7 @@ cd openshift-packet-deploy/terraform
      terraform apply
      ``` 
 
- 7. Cleanup the boostrap node once provisioning and installation is complete
+ 7. Cleanup the boostrap node once provisioning and installation is complete by permanently or temporarily setting `count_bootstrap=0`
      ```bash
      terraform apply -var="count_bootstrap=0"
      ```

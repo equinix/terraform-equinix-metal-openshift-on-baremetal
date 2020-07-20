@@ -74,12 +74,12 @@ variable "cluster_name" {
 }
 
 variable "ocp_version" {
-  default = "4.4"
+  default = "4.5"
   description = "OpenShift minor release version"
 }
 
 variable "ocp_version_zstream" {
-  default = "3"
+  default = "2"
   description = "OpenShift zstream version"
 }
 
