@@ -10,7 +10,7 @@ oc get nodes -l node-role.kubernetes.io/worker -o jsonpath='{range .items[*]}{.m
 unset WORKER_DISKS
 for i in {0..2}; do
   export WORKER_DISKS+='        - /dev/disk/by-id/'
-  export WORKER_DISKS+=$(ssh -q  -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} core@worker-${i}.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} "lsblk -o NAME,FSTYPE -dsn | awk '\$2 == \"\" {print \$1}' | grep -v -e 'sd[a-b]' -e '[0-9]' | awk '{system(\"ls -l /dev/disk/by-id/ | grep \" \$1 \" | head -1\")}' | awk '{print(\$9)}'")
+  export WORKER_DISKS+=$(ssh -q  -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} core@worker-${i}.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} "lsblk -o NAME,FSTYPE -dsn | awk '\$2 == \"\" {print \$1}' | grep -v -e '[0-9]' | awk '{system(\"ls -l /dev/disk/by-id/ | grep \" \$1 \" | head -1\")}' | awk '{print(\$9)}'")
   export WORKER_DISKS+="\n"
 done
 
