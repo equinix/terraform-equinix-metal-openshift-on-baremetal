@@ -6,7 +6,13 @@ Now that your cluster is up and running you can start tackling Day 2 operations.
 
 This can be executed from your bastion host, or locally depending on your OS:
 
+Shortcut using existing `TF_VAR_` variables:
+```bash
+bash extras/1_configure_ingresscerts.sh
 ```
+
+Optionally customize the parameters/variables before execution:
+```bash
 export KUBECONFIG="/tmp/artifacts/install/auth/kubeconfig"      ## Update to kubeconfig location
 
 export CF_Key=$TF_VAR_cf_api_key                                ## Update to appropriate Cloudflare key (or other DNS provider cred)

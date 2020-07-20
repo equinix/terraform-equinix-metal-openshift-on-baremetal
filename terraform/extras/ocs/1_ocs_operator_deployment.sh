@@ -36,7 +36,6 @@ spec:
   name: ocs-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  startingCSV: ocs-operator.v4.4.0
 EOF
 
 ### Sleep for 15s while Operator Subscription initializes
