@@ -1,6 +1,40 @@
 # Overview
 
-Now that your cluster is up and running you can start tackling Day 2 operations. This assumes you're using CloudFlare for DNS, but the steps remain similar for other providers.
+Now that your cluster is up and running you can start tackling Day 2 operations such as deploying signed certificates for select components, initializing the integrated registry, and/or scaling your compute or storage nodes. Some of these procedures assume you're using CloudFlare for DNS, but the steps remain similar for other providers.
+
+# Scaling Compute
+
+Adding worker nodes to your cluster on Packet is trivial since the provisioning process is largely automated, but there are supplemental considerations if your cluster has been running for more than 24+ hours: https://access.redhat.com/solutions/4799921. 
+
+If your cluster has been deployed/running for *less than 24 hours* you can scale compute by incrementing the `count_compute` value in `vars.tf` or your sourced environment including `TF_VAR_count_compute` and rerunning `terraform apply`. For example, if you initially deploy 3 worker compute nodes by setting `TF_VAR_count_compute=3` and you'd like to scale to 5 nodes, you would simply re-execute your terraform apply (*NOTE: this example does NOT persist the count value for your compute nodes. You should permanently set `count_compute` or `TF_VAR_count_compute`*:
+```bash
+export KUBECONFIG="/tmp/artifacts/install/auth/kubeconfig"      ## Update to kubeconfig location
+
+# Scale-up -- NOTE: You should permanently set `count_compute` or `TF_VAR_count_compute`
+terraform apply -var="count_compute=5" -var="count_bootstrap=0" --auto-approve
+
+# Post-provisioning
+oc get csr -oname | xargs oc adm certificate approve
+```
+
+
+If your cluster has been deploymed/running for *24 hours or more* you must update your bastion-hosted `worker.ign` file before scaling:
+```bash
+export KUBECONFIG="/tmp/artifacts/install/auth/kubeconfig"      ## Update to kubeconfig location
+source ~/.packet-vars
+
+# Pre-scaling
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} << EOF
+    echo \"q\" | openssl s_client -connect api.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain}:22623  -showcerts | awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' | base64 --wrap=0 | tee ./api-int.base64 && \
+sed --regexp-extended --in-place=.backup "s%base64,[^,]+%base64,$(cat ./api-int.base64)\"%" /usr/share/nginx/html/worker.ign
+EOF
+
+# Scale-up -- NOTE: You should permanently set `count_compute` or `TF_VAR_count_compute`
+terraform apply -var="count_compute=5" -var="count_bootstrap=0" --auto-approve
+
+# Post-provisioning
+oc get csr -oname | xargs oc adm certificate approve
+```
 
 # Let's Encrypt Wildcard Certificates
 
