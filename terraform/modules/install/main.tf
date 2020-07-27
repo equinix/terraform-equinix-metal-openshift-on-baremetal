@@ -45,6 +45,16 @@ locals {
     server worker-${i} ${element(var.worker_ips, i)}:80 check
     %{ endfor ~}
   EOT
+  expanded_masters_https = <<-EOT
+    %{ for i in range(length(var.master_ips)) ~} 
+    server master-${i} ${element(var.master_ips, i)}:443 check
+    %{ endfor ~}
+  EOT
+  expanded_masters_http = <<-EOT
+    %{ for i in range(length(var.master_ips)) ~} 
+    server master-${i} ${element(var.master_ips, i)}:80 check
+    %{ endfor ~}
+  EOT
   expanded_masters_nfs = <<-EOT
     %{ for i in range(length(var.master_ips)) ~}
 /mnt/nfs/ocp  ${element(var.master_ips, i)}(rw,no_root_squash)
@@ -58,6 +68,7 @@ locals {
 
   expanded_bootstrap_api    = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:6443 check" : ""
   expanded_bootstrap_mcs    = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:22623 check" : ""
+
   haproxy_cfg_file      = "/etc/haproxy/haproxy.cfg"
 }
 
@@ -67,8 +78,8 @@ data "template_file" "haproxy_lb" {
 
   vars = {
     expanded_masters       = local.expanded_masters
-    expanded_compute_http  = local.expanded_compute_http
-    expanded_compute_https = local.expanded_compute_https
+    expanded_compute_http  = tonumber(var.count_compute) >= 1 ? local.expanded_compute_http : local.expanded_masters_http
+    expanded_compute_https = tonumber(var.count_compute) >= 1 ? local.expanded_compute_https : local.expanded_masters_https
     expanded_mcs           = local.expanded_mcs
     expanded_bootstrap_api = local.expanded_bootstrap_api
     expanded_bootstrap_mcs = local.expanded_bootstrap_mcs
@@ -118,7 +129,7 @@ resource "null_resource" "check_port" {
       i=0;
       while [[ $(curl -k -s -o /dev/null -w ''%%{http_code}'' https://${length(var.bootstrap_ip) >= 1 ? "${element(var.bootstrap_ip, 0)}" : "${var.bastion_ip}"}:6443) != '403' ]]; do 
       ((i++));
-      echo "Waiting for TCP6443 on boostrap/API (Retrying $i of 1200)";
+      echo "Waiting for TCP6443 on bootstrap/API (Retrying $i of 1200)";
       sleep 2;
       if [[ $i -ge 1200 ]]; then 
       echo "Timeout exceed"; exit 1; 

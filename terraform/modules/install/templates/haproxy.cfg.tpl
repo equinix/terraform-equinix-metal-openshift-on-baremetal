@@ -74,6 +74,7 @@ listen  stats   :1936
         stats show-node
         stats auth admin:OCP4thewin
         stats uri  /haproxy?stats
+#
 #---------------------------------------------------------------------
 # main frontend which proxys to the backends
 #---------------------------------------------------------------------

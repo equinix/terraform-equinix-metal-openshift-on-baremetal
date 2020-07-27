@@ -124,7 +124,7 @@ resource "null_resource" "ocp_install_manifests" {
       "timedatectl set-time \"$${new_time}\"",
       "cp /tmp/artifacts/install/install-config.yaml /tmp/artifacts/install/install-config.yaml.backup",
       "/tmp/artifacts/openshift-install create manifests --dir /tmp/artifacts/install",
-      "sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' /tmp/artifacts/install/manifests/cluster-scheduler-02-config.yml",
+      "[[ ${var.count_compute} -ge 2 ]] && sed -i 's/mastersSchedulable: true/mastersSchedulable: false/g' /tmp/artifacts/install/manifests/cluster-scheduler-02-config.yml",
       "/tmp/artifacts/openshift-install create ignition-configs --dir /tmp/artifacts/install",
       "cp /tmp/artifacts/install/*.ign /usr/share/nginx/html/",
       "chmod -R 0755 /usr/share/nginx/html/",

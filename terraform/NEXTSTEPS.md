@@ -1,8 +1,8 @@
-# Overview
+# Next Steps
 
 Now that your cluster is up and running you can start tackling Day 2 operations such as deploying signed certificates for select components, initializing the integrated registry, and/or scaling your compute or storage nodes. Some of these procedures assume you're using CloudFlare for DNS, but the steps remain similar for other providers.
 
-# Scaling Compute
+## Scaling Compute
 
 Adding worker nodes to your cluster on Packet is trivial since the provisioning process is largely automated, but there are supplemental considerations if your cluster has been running for more than 24+ hours: https://access.redhat.com/solutions/4799921. 
 
@@ -36,7 +36,7 @@ terraform apply -var="count_compute=5" -var="count_bootstrap=0" --auto-approve
 oc get csr -oname | xargs oc adm certificate approve
 ```
 
-# Let's Encrypt Wildcard Certificates
+## Let's Encrypt Wildcard Certificates
 
 This can be executed from your bastion host, or locally depending on your OS:
 
@@ -72,7 +72,7 @@ oc patch ingresscontroller default -n openshift-ingress-operator --type=merge --
 
 ```
 
-# Registry Operator Update
+## Registry Operator Update
 
 The registry operator defaults to a state of "Removed" for bare metal installations, but if you've deployed an appropriate storage backend (e.g. `ocp_storage_nfs_enable`) you can patch the registry operator configuration:
 
@@ -84,7 +84,7 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 
 ```
 
-# OpenShift Virtualization (CNV/kubevirt)
+## OpenShift Virtualization (CNV/kubevirt)
 
 If you're interested in evaluating OpenShift virtualization, enable the appropriate operator and subscription using the `extras` provided:
 
@@ -95,9 +95,9 @@ oc apply -f extras/cnv/1_cnv_operator_subscription.yaml
 oc apply -f extras/cnv/2_cnv_hostpath_provisioner.yaml
 ```
 
-# Troubleshooting
+## Troubleshooting
 
-## Packet
+### Packet
 
 If you encounter issues with a specific Packet host you may need to leverage Packet's *Out-of-Band Console* to troubleshoot. This is slightly difficult given CoreOS reverts the initial serial console target, which we configure as `console=ttyS1,115200n8` during *Custom iPXE* boot. After successful installation of CoreOS this is reverted to the default `console=ttyS0,115200n8`. While rebooting a host you can modify the kernel command line argument by hitting `e` when you see the grub menu entry for CoreOS. Change `ttyS0` to `ttyS1` and press `CTL+X` to continue booting.
 

@@ -1,5 +1,5 @@
 # OpenShift via Terraform on Packet
-This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes on [Packet](http://packet.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
+This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Packet](http://packet.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
 
 ## Install Terraform
 Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
@@ -73,7 +73,7 @@ cd openshift-packet-deploy/terraform
      terraform apply
      ``` 
 
- 7. Cleanup the boostrap node once provisioning and installation is complete by permanently or temporarily setting `count_bootstrap=0`
+ 7. Cleanup the boostrap node once provisioning and installation is complete by permanently (recommended) or temporarily setting `count_bootstrap=0`
      ```bash
      terraform apply -var="count_bootstrap=0"
      ```
@@ -81,3 +81,7 @@ cd openshift-packet-deploy/terraform
      ```
      terraform output
      ```
+
+---
+
+<a name="3nodedeployment"><sup>1</sup></a> As of OpenShift Container Platform 4.5 you can [deploy three-node clusters on bare metal](https://docs.openshift.com/container-platform/4.5/installing/installing_bare_metal/installing-bare-metal.html#installation-three-node-cluster_installing-bare-metal). Setting `count_compute=0` will support deployment of a 3-node cluster. [↩](#openshift-via-terraform-on-packet)
