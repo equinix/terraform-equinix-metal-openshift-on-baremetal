@@ -6,5 +6,11 @@ terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/.terraform.tfstate.lock.info
 terraform/artifacts
+.terraform*
+/override.tf
+/terraform.tfvars
+terraform.tfstate*
+artifacts/
+auth/
 *.swp
 .vscode

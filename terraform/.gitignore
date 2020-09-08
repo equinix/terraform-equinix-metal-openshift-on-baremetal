@@ -1,8 +1,0 @@
-.terraform*
-/override.tf
-/terraform.tfvars
-terraform.tfstate*
-artifacts/
-auth/
-
-
