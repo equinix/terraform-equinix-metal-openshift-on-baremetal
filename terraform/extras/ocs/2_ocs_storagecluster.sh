@@ -24,7 +24,7 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 1
+            storage: 100Gi
         storageClassName: localblock
         volumeMode: Block
     name: ocs-deviceset

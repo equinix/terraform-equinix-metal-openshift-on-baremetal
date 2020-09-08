@@ -1,4 +1,4 @@
-#!/bin/
+#!/bin/bash
 
 ### NOTE: This assumes you're TF_VAR environment variables are still set, and you've authenticated using the generated kubeconfig or valid token.
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Use 'hostpath-provisioner' if you decide not to deploy OpenShift Container Storage
+#storageclass="hostpath-provisioner"
+storageclass="ocs-storagecluster-cephfs"
+
 ## Install virtctl client on the bastion/LB
 
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} 'wget https://github.com/kubevirt/kubevirt/releases/download/v0.30.1/virtctl-v0.30.1-linux-amd64 -O /usr/bin/virtctl ; chmod a+x /usr/bin/virtctl'
@@ -14,7 +18,7 @@ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_
 #EOF
 
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} << EOF
-    wget https://app.vagrantup.com/peru/boxes/windows-server-2019-standard-x64-eval/versions/20200707.01/providers/libvirt.box -O /usr/share/nginx/html/libvirt.box
+    wget https://app.vagrantup.com/peru/boxes/windows-server-2019-standard-x64-eval/versions/20200806.01/providers/libvirt.box -O /usr/share/nginx/html/libvirt.box
     cd /usr/share/nginx/html && tar xvzf libvirt.box
     mv box.img W2K19.img
     rm -f libvirt.box
@@ -55,7 +59,7 @@ spec:
           resources:
             requests:
               storage: 55Gi
-          storageClassName: ocs-storagecluster-cephfs
+          storageClassName: ${storageclass}
           volumeMode: Filesystem
         source:
           http:
@@ -139,4 +143,4 @@ EOF
 
 ## Expose your VM for RDP Access
 ## oc project packet-liveaverage
-## virtctl expose vm eval --port=3389 --target-port=3389 --name=eval-rdp --type=NodePort
+## virtctl expose vm eval19 --port=3389 --target-port=3389 --name=eval-rdp --type=NodePort
