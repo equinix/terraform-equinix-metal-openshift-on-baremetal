@@ -1,4 +1,4 @@
-[![Terraform CI](https://github.com/RedHatSI/openshift-packet-deploy/workflows/Terraform%20CI/badge.svg)](https://github.com/RedHatSI/openshift-packet-deploy/actions?query=workflow%3A%22Terraform+CI%22) [![](https://img.shields.io/badge/stability-experimental-red.svg)](#experimental)
+[![Terraform CI](https://github.com/RedHatSI/terraform-packet-openshift/workflows/Terraform%20CI/badge.svg)](https://github.com/RedHatSI/terraform-packet-openshift/actions?query=workflow%3A%22Terraform+CI%22) [![](https://img.shields.io/badge/stability-experimental-red.svg)](#experimental)
 
 # OpenShift via Terraform on Packet
 This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Packet](http://packet.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
@@ -39,8 +39,8 @@ sudo apt-get install jq
 
 To download this project, run the following command:
 ```bash
-git clone https://github.com/RedHatSI/openshift-packet-deploy.git
-cd openshift-packet-deploy/terraform
+git clone https://github.com/RedHatSI/terraform-packet-openshift.git
+cd terraform-packet-openshift
 ```
 
 ## Usage
