@@ -19,10 +19,10 @@ module "bastion" {
 module "dns_lb" {
   source = "./modules/dns"
 
-  cluster_name         = var.cluster_name
-  cluster_basedomain   = var.cluster_basedomain
-  cf_zone_id           = var.cf_zone_id
-  node_type            = "lb"
-  node_ips             = tolist([module.bastion.lb_ip])
+  cluster_name       = var.cluster_name
+  cluster_basedomain = var.cluster_basedomain
+  cf_zone_id         = var.cf_zone_id
+  node_type          = "lb"
+  node_ips           = tolist([module.bastion.lb_ip])
 }
 

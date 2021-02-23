@@ -1,5 +1,5 @@
 module "openshift_install" {
-  source               = "./modules/install"
+  source = "./modules/install"
 
   ssh_private_key_path = var.ssh_private_key_path
   operating_system     = var.bastion_operating_system

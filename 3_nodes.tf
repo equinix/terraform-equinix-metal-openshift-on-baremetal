@@ -17,11 +17,11 @@ module "openshift_bootstrap" {
 module "dns_bootstrap" {
   source = "./modules/dns"
 
-  cluster_name         = var.cluster_name
-  cluster_basedomain   = var.cluster_basedomain
-  cf_zone_id           = var.cf_zone_id
-  node_type            = "bootstrap"
-  node_ips             = module.openshift_bootstrap.node_ip
+  cluster_name       = var.cluster_name
+  cluster_basedomain = var.cluster_basedomain
+  cf_zone_id         = var.cf_zone_id
+  node_type          = "bootstrap"
+  node_ips           = module.openshift_bootstrap.node_ip
 }
 
 module "openshift_masters" {
@@ -43,11 +43,11 @@ module "openshift_masters" {
 module "dns_masters" {
   source = "./modules/dns"
 
-  cluster_name         = var.cluster_name
-  cluster_basedomain   = var.cluster_basedomain
-  cf_zone_id           = var.cf_zone_id
-  node_type            = "master"
-  node_ips             = module.openshift_masters.node_ip
+  cluster_name       = var.cluster_name
+  cluster_basedomain = var.cluster_basedomain
+  cf_zone_id         = var.cf_zone_id
+  node_type          = "master"
+  node_ips           = module.openshift_masters.node_ip
 }
 
 module "openshift_workers" {
@@ -69,9 +69,9 @@ module "openshift_workers" {
 module "dns_workers" {
   source = "./modules/dns"
 
-  cluster_name         = var.cluster_name
-  cluster_basedomain   = var.cluster_basedomain
-  cf_zone_id           = var.cf_zone_id
-  node_type            = "worker"
-  node_ips             = module.openshift_workers.node_ip
+  cluster_name       = var.cluster_name
+  cluster_basedomain = var.cluster_basedomain
+  cf_zone_id         = var.cf_zone_id
+  node_type          = "worker"
+  node_ips           = module.openshift_workers.node_ip
 }
