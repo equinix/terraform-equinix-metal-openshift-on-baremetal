@@ -88,7 +88,7 @@ backend openshift-api-server
     balance source
     mode tcp
     ${expanded_bootstrap_api}
-${expanded_masters}
+${expanded_controlplane}
 
 frontend machine-config-server
     bind *:22623

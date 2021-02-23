@@ -1,40 +1,40 @@
 locals {
-  expanded_masters       = <<-EOT
+  expanded_controlplane       = <<-EOT
     %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:6443 check
     %{endfor~}
   EOT
-  expanded_mcs           = <<-EOT
+  expanded_mcs                = <<-EOT
     %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:22623 check
     %{endfor~}
   EOT
-  expanded_compute_https = <<-EOT
+  expanded_compute_https      = <<-EOT
     %{for i in range(length(var.worker_ips))~}
     server worker-${i} ${element(var.worker_ips, i)}:443 check
     %{endfor~}
   EOT
-  expanded_compute_http  = <<-EOT
+  expanded_compute_http       = <<-EOT
     %{for i in range(length(var.worker_ips))~}
     server worker-${i} ${element(var.worker_ips, i)}:80 check
     %{endfor~}
   EOT
-  expanded_masters_https = <<-EOT
+  expanded_controlplane_https = <<-EOT
     %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:443 check
     %{endfor~}
   EOT
-  expanded_masters_http  = <<-EOT
+  expanded_controlplane_http  = <<-EOT
     %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:80 check
     %{endfor~}
   EOT
-  expanded_masters_nfs   = <<-EOT
+  expanded_controlplane_nfs   = <<-EOT
     %{for i in range(length(var.master_ips))~}
 /mnt/nfs/ocp  ${element(var.master_ips, i)}(rw,no_root_squash)
     %{endfor~}
   EOT
-  expanded_compute_nfs   = <<-EOT
+  expanded_compute_nfs        = <<-EOT
     %{for i in range(length(var.worker_ips))~}
 /mnt/nfs/ocp  ${element(var.worker_ips, i)}(rw,no_root_squash)
     %{endfor~}
@@ -51,9 +51,9 @@ data "template_file" "haproxy_lb" {
   template   = file("${path.module}/assets/haproxy.cfg.tpl")
 
   vars = {
-    expanded_masters       = local.expanded_masters
-    expanded_compute_http  = tonumber(var.count_compute) >= 1 ? local.expanded_compute_http : local.expanded_masters_http
-    expanded_compute_https = tonumber(var.count_compute) >= 1 ? local.expanded_compute_https : local.expanded_masters_https
+    expanded_controlplane  = local.expanded_controlplane
+    expanded_compute_http  = tonumber(var.count_compute) >= 1 ? local.expanded_compute_http : local.expanded_controlplane_http
+    expanded_compute_https = tonumber(var.count_compute) >= 1 ? local.expanded_compute_https : local.expanded_controlplane_https
     expanded_mcs           = local.expanded_mcs
     expanded_bootstrap_api = local.expanded_bootstrap_api
     expanded_bootstrap_mcs = local.expanded_bootstrap_mcs
@@ -137,7 +137,7 @@ resource "null_resource" "ocp_installer_wait_for_bootstrap" {
 
 data "template_file" "nfs_exports" {
   template = <<-EOT
-    ${local.expanded_masters_nfs}
+    ${local.expanded_controlplane_nfs}
     ${local.expanded_compute_nfs}
     EOT
 }

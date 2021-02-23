@@ -77,7 +77,7 @@ module "dns_bootstrap" {
   node_ips           = module.openshift_bootstrap.node_ip
 }
 
-module "openshift_masters" {
+module "openshift_controlplane" {
   source = "./modules/node"
 
   cluster_name         = var.cluster_name
@@ -93,14 +93,14 @@ module "openshift_masters" {
   depends              = [module.prepare_openshift.finished]
 }
 
-module "dns_masters" {
+module "dns_controlplane" {
   source = "./modules/dns"
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
   cf_zone_id         = var.cf_zone_id
   node_type          = "master"
-  node_ips           = module.openshift_masters.node_ip
+  node_ips           = module.openshift_controlplane.node_ip
 }
 
 module "openshift_workers" {
@@ -140,9 +140,9 @@ module "openshift_install" {
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
   bootstrap_ip         = module.openshift_bootstrap.node_ip
-  master_ips           = module.openshift_masters.node_ip
+  master_ips           = module.openshift_controlplane.node_ip
   worker_ips           = module.openshift_workers.node_ip
-  depends              = [module.openshift_masters.node_ip, module.openshift_workers.node_ip]
+  depends              = [module.openshift_controlplane.node_ip, module.openshift_workers.node_ip]
 
   ocp_storage_nfs_enable    = var.ocp_storage_nfs_enable
   ocp_storage_ocs_enable    = var.ocp_storage_ocs_enable
