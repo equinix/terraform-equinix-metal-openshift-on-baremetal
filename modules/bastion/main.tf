@@ -1,28 +1,11 @@
-variable "depends" {
-  type    = any
-  default = null
-}
-
-variable "ssh_private_key_path" {}
-variable "cluster_name" {}
-variable "cluster_basedomain" {}
-variable "cf_zone_id" {}
-variable "ocp_version" {}
-variable "ocp_version_zstream" {}
-variable "nodes" {
-  description = "Generic list of OpenShift node types"
-  type        = list(string)
-  default     = ["bootstrap", "master", "worker"]
-}
-
 data "template_file" "user_data" {
-  template = file("${path.module}/templates/user_data_${var.operating_system}.sh")
+  template = file("${path.module}/assets/user_data_${var.operating_system}.sh")
 }
 
 data "template_file" "ipxe_script" {
   depends_on = [metal_device.lb]
   for_each   = toset(var.nodes)
-  template   = file("${path.module}/templates/ipxe.tpl")
+  template   = file("${path.module}/assets/ipxe.tpl")
 
   vars = {
     node_type           = each.value
@@ -35,7 +18,7 @@ data "template_file" "ipxe_script" {
 data "template_file" "ignition_append" {
   depends_on = [metal_device.lb]
   for_each   = toset(var.nodes)
-  template   = file("${path.module}/templates/ignition-append.json.tpl")
+  template   = file("${path.module}/assets/ignition-append.json.tpl")
 
   vars = {
     node_type          = each.value
@@ -165,9 +148,3 @@ resource "null_resource" "ignition_append_files" {
     ]
   }
 }
-
-output "finished" {
-  depends_on = [null_resource.file_uploads, null_resource.ipxe_files]
-  value      = "Loadbalancer provisioning finished."
-}
-

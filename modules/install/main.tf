@@ -1,80 +1,54 @@
-variable "depends" {
-  type    = any
-  default = null
-}
-
-variable "ssh_private_key_path" {}
-variable "bastion_ip" {}
-variable "count_master" {}
-variable "count_compute" {}
-variable "operating_system" {}
-variable "cluster_name" {}
-variable "cluster_basedomain" {}
-variable "ocp_storage_nfs_enable" {}
-variable "ocp_storage_ocs_enable" {}
-variable "ocp_virtualization_enable" {}
-variable "bootstrap_ip" {
-  type = list
-}
-variable "master_ips" {
-  type = list
-}
-variable "worker_ips" {
-  type = list
-}
-
-
 locals {
-  expanded_masters = <<-EOT
-    %{ for i in range(length(var.master_ips)) ~} 
+  expanded_masters       = <<-EOT
+    %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:6443 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
-  expanded_mcs = <<-EOT
-    %{ for i in range(length(var.master_ips)) ~} 
+  expanded_mcs           = <<-EOT
+    %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:22623 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
   expanded_compute_https = <<-EOT
-    %{ for i in range(length(var.worker_ips)) ~}
+    %{for i in range(length(var.worker_ips))~}
     server worker-${i} ${element(var.worker_ips, i)}:443 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
-  expanded_compute_http = <<-EOT
-    %{ for i in range(length(var.worker_ips)) ~}
+  expanded_compute_http  = <<-EOT
+    %{for i in range(length(var.worker_ips))~}
     server worker-${i} ${element(var.worker_ips, i)}:80 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
   expanded_masters_https = <<-EOT
-    %{ for i in range(length(var.master_ips)) ~} 
+    %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:443 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
-  expanded_masters_http = <<-EOT
-    %{ for i in range(length(var.master_ips)) ~} 
+  expanded_masters_http  = <<-EOT
+    %{for i in range(length(var.master_ips))~} 
     server master-${i} ${element(var.master_ips, i)}:80 check
-    %{ endfor ~}
+    %{endfor~}
   EOT
-  expanded_masters_nfs = <<-EOT
-    %{ for i in range(length(var.master_ips)) ~}
+  expanded_masters_nfs   = <<-EOT
+    %{for i in range(length(var.master_ips))~}
 /mnt/nfs/ocp  ${element(var.master_ips, i)}(rw,no_root_squash)
-    %{ endfor ~}
+    %{endfor~}
   EOT
-  expanded_compute_nfs = <<-EOT
-    %{ for i in range(length(var.worker_ips)) ~}
+  expanded_compute_nfs   = <<-EOT
+    %{for i in range(length(var.worker_ips))~}
 /mnt/nfs/ocp  ${element(var.worker_ips, i)}(rw,no_root_squash)
-    %{ endfor ~}
+    %{endfor~}
   EOT
 
-  expanded_bootstrap_api    = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:6443 check" : ""
-  expanded_bootstrap_mcs    = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:22623 check" : ""
+  expanded_bootstrap_api = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:6443 check" : ""
+  expanded_bootstrap_mcs = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:22623 check" : ""
 
-  haproxy_cfg_file      = "/etc/haproxy/haproxy.cfg"
+  haproxy_cfg_file = "/etc/haproxy/haproxy.cfg"
 }
 
 data "template_file" "haproxy_lb" {
-    depends_on = [ var.depends ]
-    template   = file("${path.module}/templates/haproxy.cfg.tpl")
+  depends_on = [var.depends]
+  template   = file("${path.module}/assets/haproxy.cfg.tpl")
 
   vars = {
     expanded_masters       = local.expanded_masters
@@ -88,7 +62,7 @@ data "template_file" "haproxy_lb" {
 
 resource "null_resource" "reconfig_lb" {
 
-  depends_on = [ var.depends ]
+  depends_on = [var.depends]
 
   provisioner "file" {
 
@@ -97,8 +71,8 @@ resource "null_resource" "reconfig_lb" {
       host        = var.bastion_ip
     }
 
-    content       = data.template_file.haproxy_lb.rendered
-    destination   = local.haproxy_cfg_file
+    content     = data.template_file.haproxy_lb.rendered
+    destination = local.haproxy_cfg_file
   }
 
   provisioner "remote-exec" {
@@ -116,10 +90,10 @@ resource "null_resource" "reconfig_lb" {
 }
 
 resource "null_resource" "check_port" {
-  depends_on = [ var.depends ]
+  depends_on = [var.depends]
 
   provisioner "remote-exec" {
-    
+
     connection {
       private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
@@ -144,7 +118,7 @@ resource "null_resource" "check_port" {
 
 resource "null_resource" "ocp_installer_wait_for_bootstrap" {
 
-  depends_on = [ null_resource.check_port ]
+  depends_on = [null_resource.check_port]
 
   provisioner "remote-exec" {
 
@@ -162,7 +136,7 @@ resource "null_resource" "ocp_installer_wait_for_bootstrap" {
 }
 
 data "template_file" "nfs_exports" {
-    template = <<-EOT
+  template = <<-EOT
     ${local.expanded_masters_nfs}
     ${local.expanded_compute_nfs}
     EOT
@@ -179,7 +153,7 @@ resource "null_resource" "reconfig_nfs_exports" {
       host        = var.bastion_ip
     }
 
-    content       = data.template_file.nfs_exports.rendered
+    content     = data.template_file.nfs_exports.rendered
     destination = "/etc/exports"
   }
 
@@ -216,10 +190,10 @@ resource "null_resource" "ocp_bootstrap_cleanup" {
 
 resource "null_resource" "ocp_installer_wait_for_completion" {
 
-  depends_on = [null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup ]
+  depends_on = [null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup]
 
   provisioner "remote-exec" {
-   
+
     connection {
       private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
@@ -237,7 +211,7 @@ resource "null_resource" "ocp_installer_wait_for_completion" {
 
 resource "null_resource" "ocp_approve_pending_csrs" {
 
-  depends_on = [ null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup ]
+  depends_on = [null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup]
 
   provisioner "remote-exec" {
     connection {
@@ -259,7 +233,7 @@ resource "null_resource" "ocp_approve_pending_csrs" {
 
 resource "null_resource" "ocp_nfs_provisioner" {
 
-  depends_on = [ null_resource.ocp_installer_wait_for_completion ]
+  depends_on = [null_resource.ocp_installer_wait_for_completion]
   count      = var.ocp_storage_nfs_enable == true ? 1 : 0
 
   provisioner "file" {
@@ -269,8 +243,8 @@ resource "null_resource" "ocp_nfs_provisioner" {
       host        = var.bastion_ip
     }
 
-    source       = "${path.module}/templates/nfs-provisioner.sh"
-    destination  = "/tmp/artifacts/nfs-provisioner.sh"
+    source      = "${path.module}/assets/nfs-provisioner.sh"
+    destination = "/tmp/artifacts/nfs-provisioner.sh"
   }
 
   provisioner "remote-exec" {
@@ -278,17 +252,10 @@ resource "null_resource" "ocp_nfs_provisioner" {
       private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
-    inline        = [
+    inline = [
       "chmod +x /tmp/artifacts/nfs-provisioner.sh",
       "/tmp/artifacts/nfs-provisioner.sh /tmp ${var.bastion_ip}"
     ]
-  
+
   }
 }
-
-
-output "finished" {
-    depends_on = [null_resource.ocp_install_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup, null_resource.ocp_installer_wait_for_completion ]
-    value      = "OpenShift install wait and cleanup finished"
-}
-
