@@ -7,7 +7,8 @@ terraform {
       source = "hashicorp/external"
     }
     metal = {
-      source = "equinix/metal"
+      source  = "equinix/metal"
+      version = "1.0.0"
     }
     null = {
       source = "hashicorp/null"
