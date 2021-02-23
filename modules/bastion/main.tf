@@ -15,10 +15,6 @@ variable "nodes" {
   default     = ["bootstrap", "master", "worker"]
 }
 
-provider "metal" {
-  auth_token = var.auth_token
-}
-
 data "template_file" "user_data" {
   template = file("${path.module}/templates/user_data_${var.operating_system}.sh")
 }
