@@ -16,11 +16,11 @@ variable "cluster_basedomain" {
 
 
 variable "auth_token" {
-  description = "Your Packet API key"
+  description = "Your Equinix Metal API key"
 }
 
 variable "project_id" {
-  description = "Your Packet Project ID"
+  description = "Your Equinix Metal Project ID"
 }
 
 variable "ssh_private_key_path" {
@@ -64,22 +64,22 @@ variable "count_master" {
 }
 
 variable "count_compute" {
-  default = "2"
+  default     = "2"
   description = "Number of Compute Nodes"
 }
 
 variable "cluster_name" {
-  default = "jr"
+  default     = "jr"
   description = "Cluster name label"
 }
 
 variable "ocp_version" {
-  default = "4.5"
+  default     = "4.5"
   description = "OpenShift minor release version"
 }
 
 variable "ocp_version_zstream" {
-  default = "2"
+  default     = "2"
   description = "OpenShift zstream version"
 }
 
@@ -90,7 +90,7 @@ variable "ocp_cluster_manager_token" {
 variable "ocp_storage_nfs_enable" {
   description = "Enable configuration of NFS and NFS-related k8s provisioner/storageClass"
   default     = true
-} 
+}
 variable "ocp_storage_ocs_enable" {
   description = "Enable installation of OpenShift Container Storage via operator. This requires a minimum of 3 worker nodes"
   default     = false

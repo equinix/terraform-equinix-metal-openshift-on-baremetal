@@ -1,7 +1,7 @@
-[![Terraform CI](https://github.com/RedHatSI/terraform-packet-openshift/workflows/Terraform%20CI/badge.svg)](https://github.com/RedHatSI/terraform-packet-openshift/actions?query=workflow%3A%22Terraform+CI%22) [![](https://img.shields.io/badge/stability-experimental-red.svg)](#experimental)
+[![Terraform CI](https://github.com/equinix/terraform-metal-openshift-on-baremetal/workflows/Terraform%20CI/badge.svg)](https://github.com/equinix/terraform-metal-openshift-on-baremetal/actions?query=workflow%3A%22Terraform+CI%22) [![](https://img.shields.io/badge/stability-experimental-red.svg)](#experimental)
 
-# OpenShift via Terraform on Packet
-This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Packet](http://packet.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
+# OpenShift via Terraform on Equinix Metal
+This collection of modules will deploy  will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://metal.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
 
 ## Install Terraform
 Terraform is just a single binary.  Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
@@ -39,19 +39,19 @@ sudo apt-get install jq
 
 To download this project, run the following command:
 ```bash
-git clone https://github.com/RedHatSI/terraform-packet-openshift.git
-cd terraform-packet-openshift
+git clone https://github.com/equinix/terraform-metal-openshift-on-baremetal.git
+cd terraform-metal-openshift
 ```
 
 ## Usage
 
-1. Follow [this](PACKET.md) to configure your Packet Public Cloud project and collect required parameters.
+1. Follow [this](PACKET.md) to configure your Equinix Metal project and collect required parameters.
 
 2. Follow [this](CLOUDFLARE.md) to configure your Cloudflare account and collect required parameters.
 
 3. [Obtain an OpenShift Cluster Manager API Token](https://cloud.redhat.com/openshift/token) for pullSecret generation.
   
-4. Configure TF_VARs applicable to your Packet project, Cloudflare zone, and OpenShift API Token:
+4. Configure TF_VARs applicable to your Equinix Metal project, Cloudflare zone, and OpenShift API Token:
      ```bash
      export TF_VAR_project_id="kajs886-l59-8488-19910kj"
      export TF_VAR_auth_token="lka6702KAmVAP8957Abny01051"
@@ -91,4 +91,4 @@ This repository is [Experimental](https://github.com/packethost/standards/blob/m
 
 ---
 
-<a name="3nodedeployment"><sup>1</sup></a> As of OpenShift Container Platform 4.5 you can [deploy three-node clusters on bare metal](https://docs.openshift.com/container-platform/4.5/installing/installing_bare_metal/installing-bare-metal.html#installation-three-node-cluster_installing-bare-metal). Setting `count_compute=0` will support deployment of a 3-node cluster. [↩](#openshift-via-terraform-on-packet)
+<a name="3nodedeployment"><sup>1</sup></a> As of OpenShift Container Platform 4.5 you can [deploy three-node clusters on bare metal](https://docs.openshift.com/container-platform/4.5/installing/installing_bare_metal/installing-bare-metal.html#installation-three-node-cluster_installing-bare-metal). Setting `count_compute=0` will support deployment of a 3-node cluster. [↩](#openshift-via-terraform-on-equinix-metal)

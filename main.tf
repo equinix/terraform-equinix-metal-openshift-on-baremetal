@@ -1,4 +1,4 @@
-provider "packet" {
+provider "metal" {
   auth_token = var.auth_token
 }
 
