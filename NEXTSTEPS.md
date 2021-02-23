@@ -42,7 +42,7 @@ This can be executed from your bastion host, or locally depending on your OS:
 
 Shortcut using existing `TF_VAR_` variables:
 ```bash
-bash extras/1_configure_ingresscerts.sh
+bash assets/1_configure_ingresscerts.sh
 ```
 
 Optionally customize the parameters/variables before execution:
@@ -86,13 +86,13 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 
 ## OpenShift Virtualization (CNV/kubevirt)
 
-If you're interested in evaluating OpenShift virtualization, enable the appropriate operator and subscription using the `extras` provided:
+If you're interested in evaluating OpenShift virtualization, enable the appropriate operator and subscription using the `assets` provided:
 
 ```
-oc apply -f extras/cnv/1_cnv_operator_subscription.yaml
+oc apply -f assets/cnv/1_cnv_operator_subscription.yaml
 
 ## Optionally, enable hostPath provisioner (recommended/required if not using OCS)
-oc apply -f extras/cnv/2_cnv_hostpath_provisioner.yaml
+oc apply -f assets/cnv/2_cnv_hostpath_provisioner.yaml
 ```
 
 ## Troubleshooting
