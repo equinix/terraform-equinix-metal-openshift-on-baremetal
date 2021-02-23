@@ -43,8 +43,8 @@ variable "facility" {
   default     = "dfw2"
 }
 
-variable "plan_master" {
-  description = "Plan for Master Nodes"
+variable "plan_controlplane" {
+  description = "Plan for Control Plane Nodes"
   default     = "c3.medium.x86"
 }
 
@@ -55,12 +55,12 @@ variable "plan_compute" {
 
 variable "count_bootstrap" {
   default     = "1"
-  description = "Number of Master Nodes."
+  description = "Number of Control Plane Nodes."
 }
 
-variable "count_master" {
+variable "count_controlplane" {
   default     = "3"
-  description = "Number of Master Nodes."
+  description = "Number of Control Plane Nodes."
 }
 
 variable "count_compute" {

@@ -1,12 +1,12 @@
 locals {
   expanded_controlplane       = <<-EOT
-    %{for i in range(length(var.master_ips))~} 
-    server master-${i} ${element(var.master_ips, i)}:6443 check
+    %{for i in range(length(var.controlplane_ips))~} 
+    server controlplane-${i} ${element(var.controlplane_ips, i)}:6443 check
     %{endfor~}
   EOT
   expanded_mcs                = <<-EOT
-    %{for i in range(length(var.master_ips))~} 
-    server master-${i} ${element(var.master_ips, i)}:22623 check
+    %{for i in range(length(var.controlplane_ips))~} 
+    server controlplane-${i} ${element(var.controlplane_ips, i)}:22623 check
     %{endfor~}
   EOT
   expanded_compute_https      = <<-EOT
@@ -20,18 +20,18 @@ locals {
     %{endfor~}
   EOT
   expanded_controlplane_https = <<-EOT
-    %{for i in range(length(var.master_ips))~} 
-    server master-${i} ${element(var.master_ips, i)}:443 check
+    %{for i in range(length(var.controlplane_ips))~} 
+    server controlplane-${i} ${element(var.controlplane_ips, i)}:443 check
     %{endfor~}
   EOT
   expanded_controlplane_http  = <<-EOT
-    %{for i in range(length(var.master_ips))~} 
-    server master-${i} ${element(var.master_ips, i)}:80 check
+    %{for i in range(length(var.controlplane_ips))~} 
+    server controlplane-${i} ${element(var.controlplane_ips, i)}:80 check
     %{endfor~}
   EOT
   expanded_controlplane_nfs   = <<-EOT
-    %{for i in range(length(var.master_ips))~}
-/mnt/nfs/ocp  ${element(var.master_ips, i)}(rw,no_root_squash)
+    %{for i in range(length(var.controlplane_ips))~}
+/mnt/nfs/ocp  ${element(var.controlplane_ips, i)}(rw,no_root_squash)
     %{endfor~}
   EOT
   expanded_compute_nfs        = <<-EOT

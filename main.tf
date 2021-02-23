@@ -13,7 +13,7 @@ module "bastion" {
   auth_token           = var.auth_token
   project_id           = var.project_id
   facility             = var.facility
-  plan                 = var.plan_master
+  plan                 = var.plan_controlplane
   operating_system     = var.bastion_operating_system
   ssh_private_key_path = var.ssh_private_key_path
   cluster_name         = var.cluster_name
@@ -42,7 +42,7 @@ module "prepare_openshift" {
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
   ocp_version          = var.ocp_version
-  count_master         = var.count_master
+  count_controlplane   = var.count_controlplane
   count_compute        = var.count_compute
   ssh_public_key_path  = var.ssh_public_key_path
   ssh_private_key_path = var.ssh_private_key_path
@@ -57,7 +57,7 @@ module "openshift_bootstrap" {
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_bootstrap
-  plan                 = var.plan_master
+  plan                 = var.plan_controlplane
   facility             = var.facility
   ssh_private_key_path = var.ssh_private_key_path
   project_id           = var.project_id
@@ -82,8 +82,8 @@ module "openshift_controlplane" {
 
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
-  node_count           = var.count_master
-  plan                 = var.plan_master
+  node_count           = var.count_controlplane
+  plan                 = var.plan_controlplane
   facility             = var.facility
   ssh_private_key_path = var.ssh_private_key_path
   project_id           = var.project_id
@@ -135,12 +135,12 @@ module "openshift_install" {
   ssh_private_key_path = var.ssh_private_key_path
   operating_system     = var.bastion_operating_system
   bastion_ip           = module.bastion.lb_ip
-  count_master         = var.count_master
+  count_controlplane   = var.count_controlplane
   count_compute        = var.count_compute
   cluster_name         = var.cluster_name
   cluster_basedomain   = var.cluster_basedomain
   bootstrap_ip         = module.openshift_bootstrap.node_ip
-  master_ips           = module.openshift_controlplane.node_ip
+  controlplane_ips     = module.openshift_controlplane.node_ip
   worker_ips           = module.openshift_workers.node_ip
   depends              = [module.openshift_controlplane.node_ip, module.openshift_workers.node_ip]
 
