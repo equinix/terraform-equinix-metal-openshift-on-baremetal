@@ -24,16 +24,6 @@ variable "project_id" {
   description = "Your Equinix Metal Project ID"
 }
 
-variable "ssh_private_key_path" {
-  description = "Your SSH private key path (used locally only)"
-  default     = "~/.ssh/id_rsa"
-}
-
-variable "ssh_public_key_path" {
-  description = "Your SSH public key path (used for install-config.yaml)"
-  default     = "~/.ssh/id_rsa.pub"
-}
-
 variable "bastion_operating_system" {
   description = "Your preferred bastion operating systems (RHEL or CentOS)"
   default     = "rhel_7"

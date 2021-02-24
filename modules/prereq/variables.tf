@@ -1,7 +1,7 @@
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
 variable "ocp_version" {}
-variable "ssh_public_key_path" {}
+variable "ssh_public_key" {}
 variable "ssh_private_key_path" {}
 variable "count_controlplane" {}
 variable "count_compute" {}

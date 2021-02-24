@@ -1,47 +1,47 @@
 locals {
   expanded_controlplane       = <<-EOT
     %{for i in range(length(var.controlplane_ips))~} 
-    server controlplane-${i} ${element(var.controlplane_ips, i)}:6443 check
+    server controlplane-${i} ${var.controlplane_ips[i]}:6443 check
     %{endfor~}
   EOT
   expanded_mcs                = <<-EOT
     %{for i in range(length(var.controlplane_ips))~} 
-    server controlplane-${i} ${element(var.controlplane_ips, i)}:22623 check
+    server controlplane-${i} ${var.controlplane_ips[i]}:22623 check
     %{endfor~}
   EOT
   expanded_compute_https      = <<-EOT
     %{for i in range(length(var.worker_ips))~}
-    server worker-${i} ${element(var.worker_ips, i)}:443 check
+    server worker-${i} ${var.worker_ips[i]}:443 check
     %{endfor~}
   EOT
   expanded_compute_http       = <<-EOT
     %{for i in range(length(var.worker_ips))~}
-    server worker-${i} ${element(var.worker_ips, i)}:80 check
+    server worker-${i} ${var.worker_ips[i]}:80 check
     %{endfor~}
   EOT
   expanded_controlplane_https = <<-EOT
     %{for i in range(length(var.controlplane_ips))~} 
-    server controlplane-${i} ${element(var.controlplane_ips, i)}:443 check
+    server controlplane-${i} ${var.controlplane_ips[i]}:443 check
     %{endfor~}
   EOT
   expanded_controlplane_http  = <<-EOT
     %{for i in range(length(var.controlplane_ips))~} 
-    server controlplane-${i} ${element(var.controlplane_ips, i)}:80 check
+    server controlplane-${i} ${var.controlplane_ips[i]}:80 check
     %{endfor~}
   EOT
   expanded_controlplane_nfs   = <<-EOT
     %{for i in range(length(var.controlplane_ips))~}
-/mnt/nfs/ocp  ${element(var.controlplane_ips, i)}(rw,no_root_squash)
+/mnt/nfs/ocp  ${var.controlplane_ips[i]}(rw,no_root_squash)
     %{endfor~}
   EOT
   expanded_compute_nfs        = <<-EOT
     %{for i in range(length(var.worker_ips))~}
-/mnt/nfs/ocp  ${element(var.worker_ips, i)}(rw,no_root_squash)
+/mnt/nfs/ocp  ${var.worker_ips[i]}(rw,no_root_squash)
     %{endfor~}
   EOT
 
-  expanded_bootstrap_api = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:6443 check" : ""
-  expanded_bootstrap_mcs = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${element(var.bootstrap_ip, 0)}:22623 check" : ""
+  expanded_bootstrap_api = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${var.bootstrap_ip[0]}:6443 check" : ""
+  expanded_bootstrap_mcs = length(var.bootstrap_ip) >= 1 ? "server bootstrap-0 ${var.bootstrap_ip[0]}:22623 check" : ""
 
   haproxy_cfg_file = "/etc/haproxy/haproxy.cfg"
 }
@@ -101,7 +101,7 @@ resource "null_resource" "check_port" {
 
     inline = [<<EOT
       i=0;
-      while [[ $(curl -k -s -o /dev/null -w ''%%{http_code}'' https://${length(var.bootstrap_ip) >= 1 ? "${element(var.bootstrap_ip, 0)}" : "${var.bastion_ip}"}:6443) != '403' ]]; do 
+      while [[ $(curl -k -s -o /dev/null -w ''%%{http_code}'' https://${length(var.bootstrap_ip) >= 1 ? var.bootstrap_ip[0] : var.bastion_ip}:6443) != '403' ]]; do 
       ((i++));
       echo "Waiting for TCP6443 on bootstrap/API (Retrying $i of 1200)";
       sleep 2;
@@ -182,7 +182,7 @@ resource "null_resource" "ocp_bootstrap_cleanup" {
     }
 
     inline = [
-      "sed -i '/${element(var.bootstrap_ip, 0)}/d' ${local.haproxy_cfg_file}",
+      "sed -i '/${var.bootstrap_ip[0]}/d' ${local.haproxy_cfg_file}",
       "systemctl restart haproxy"
     ]
   }
@@ -211,7 +211,10 @@ resource "null_resource" "ocp_installer_wait_for_completion" {
 
 resource "null_resource" "ocp_approve_pending_csrs" {
 
-  depends_on = [null_resource.ocp_installer_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup]
+  depends_on = [
+    null_resource.ocp_installer_wait_for_bootstrap,
+    null_resource.ocp_bootstrap_cleanup,
+  ]
 
   provisioner "remote-exec" {
     connection {

@@ -2,11 +2,12 @@ data "cloudflare_zones" "basedomain" {
   filter {
     name        = var.cluster_basedomain
     lookup_type = "exact"
+    status      = "active"
   }
 }
 
 resource "cloudflare_record" "dns_a_cluster_api" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "A"
   name    = "api.${var.cluster_name}.${var.cluster_basedomain}"
   value   = var.node_ips[count.index]
@@ -14,7 +15,7 @@ resource "cloudflare_record" "dns_a_cluster_api" {
 }
 
 resource "cloudflare_record" "dns_a_cluster_api_int" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "A"
   name    = "api-int.${var.cluster_name}.${var.cluster_basedomain}"
   value   = var.node_ips[count.index]
@@ -22,7 +23,7 @@ resource "cloudflare_record" "dns_a_cluster_api_int" {
 }
 
 resource "cloudflare_record" "dns_a_cluster_wildcard_https" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "A"
   name    = "*.apps.${var.cluster_name}.${var.cluster_basedomain}"
   value   = var.node_ips[count.index]
@@ -30,7 +31,7 @@ resource "cloudflare_record" "dns_a_cluster_wildcard_https" {
 }
 
 resource "cloudflare_record" "dns_a_node" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "A"
   name    = "${var.node_type}-${count.index}.${var.cluster_name}.${var.cluster_basedomain}"
   value   = var.node_ips[count.index]
@@ -38,7 +39,7 @@ resource "cloudflare_record" "dns_a_node" {
 }
 
 resource "cloudflare_record" "dns_a_etcd" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "A"
   name    = "etcd-${count.index}.${var.cluster_name}.${var.cluster_basedomain}"
   value   = var.node_ips[count.index]
@@ -46,7 +47,7 @@ resource "cloudflare_record" "dns_a_etcd" {
 }
 
 resource "cloudflare_record" "dns_srv_etcd" {
-  zone_id = cloudflare_zones.basedomain[0].zone_id
+  zone_id = data.cloudflare_zones.basedomain.id
   type    = "SRV"
   name    = "_etcd-server-ssl._tcp"
   count   = (var.node_type == "master" ? length(var.node_ips) : 0)

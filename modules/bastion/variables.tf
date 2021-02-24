@@ -1,8 +1,3 @@
-variable "auth_token" {
-  description = "Equinix Metal API Key"
-  type        = string
-}
-
 variable "project_id" {
   description = "Equinix Metal Project ID"
   type        = string

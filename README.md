@@ -11,8 +11,8 @@ Terraform is just a single binary. Visit their [download page](https://www.terra
 Here is an example for **macOS**:
 
 ```bash
-curl -LO https://releases.hashicorp.com/terraform/0.12.25/terraform_0.12.26_darwin_amd64.zip
-unzip terraform_0.12.25_darwin_amd64.zip
+curl -LO https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_darwin_amd64.zip
+unzip terraform_0.14.7_darwin_amd64.zip
 chmod +x terraform
 sudo mv terraform /usr/local/bin/
 ```
@@ -20,8 +20,8 @@ sudo mv terraform /usr/local/bin/
 Example for **Linux**:
 
 ```bash
-wget https://releases.hashicorp.com/terraform/0.12.26/terraform_0.12.26_linux_amd64.zip
-unzip terraform_0.12.26_linux_amd64.zip
+wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip
+unzip terraform_0.14.7_linux_amd64.zip
 sudo install terraform /usr/local/bin/
 ```
 

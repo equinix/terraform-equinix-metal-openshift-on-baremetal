@@ -3,7 +3,12 @@
 //}
 
 output "finished" {
-  depends_on = [null_resource.ocp_install_wait_for_bootstrap, null_resource.ocp_bootstrap_cleanup, null_resource.ocp_installer_wait_for_completion]
-  value      = "OpenShift install wait and cleanup finished"
+  depends_on = [
+    null_resource.ocp_approve_pending_csrs,
+    null_resource.ocp_nfs_provisioner,
+    null_resource.reconfig_lb,
+    null_resource.reconfig_nfs_exports,
+  ]
+  value = "OpenShift install wait and cleanup finished"
 }
 

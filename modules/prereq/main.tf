@@ -60,11 +60,11 @@ data "template_file" "installer_config" {
   depends_on = [null_resource.ocp_pullsecret, null_resource.ocp_installer]
   template   = file("${path.module}/assets/install-config.yaml.tpl")
   vars = {
-    cluster_name        = var.cluster_name
-    cluster_basedomain  = var.cluster_basedomain
-    ssh_public_key_path = var.ssh_public_key_path
-    count_controlplane  = var.count_controlplane
-    count_compute       = var.count_compute
+    cluster_name       = var.cluster_name
+    cluster_basedomain = var.cluster_basedomain
+    ssh_public_key     = var.ssh_public_key
+    count_controlplane = var.count_controlplane
+    count_compute      = var.count_compute
   }
 }
 

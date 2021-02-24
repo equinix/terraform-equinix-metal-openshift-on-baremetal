@@ -19,4 +19,4 @@ controlPlane:
   replicas: ${count_controlplane}
 platform:
   none: {}
-sshKey: '${trimspace(file("${ssh_public_key_path}"))}'
+sshKey: '${ssh_public_key}'
