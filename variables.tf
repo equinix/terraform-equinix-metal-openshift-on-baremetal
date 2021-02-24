@@ -1,13 +1,14 @@
-variable "cf_email" {
-  description = "Your Cloudflare email address"
+
+variable "dns_provider" {
+  type        = string
+  description = "Name of the DNS module to use (cloudflare, linode)"
+  default     = "cloudflare"
 }
 
-variable "cf_api_key" {
-  description = "Your Cloudflare API key"
-}
-
-variable "cf_zone_id" {
-  description = "Your Cloudflare Zone"
+variable "dns_options" {
+  type        = any
+  description = "Options specific to the dns module. Check the documentation for the dns module for details. Example: {\"email\":\"\", \"api_key\": \"\"}"
+  default     = null
 }
 
 variable "cluster_basedomain" {
@@ -69,7 +70,7 @@ variable "count_compute" {
 }
 
 variable "cluster_name" {
-  default     = "jr"
+  default     = "metal"
   description = "Cluster name label"
 }
 

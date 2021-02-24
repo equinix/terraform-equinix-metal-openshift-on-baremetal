@@ -40,7 +40,6 @@ variable "depends" {
 variable "ssh_private_key_path" {}
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
-variable "cf_zone_id" {}
 variable "ocp_version" {}
 variable "ocp_version_zstream" {}
 variable "nodes" {
