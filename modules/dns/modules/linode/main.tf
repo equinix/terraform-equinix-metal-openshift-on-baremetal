@@ -1,5 +1,8 @@
+locals {
+  basedomain = replace(var.cluster_basedomain, "${var.cluster_name}.", "")
+}
 data "linode_domain" "basedomain" {
-  domain = replace(var.cluster_basedomain, "${var.cluster_name}.", "")
+  domain = local.basedomain
 }
 
 resource "linode_domain_record" "dns_a_cluster_api" {
@@ -45,13 +48,13 @@ resource "linode_domain_record" "dns_a_etcd" {
 resource "linode_domain_record" "dns_srv_etcd" {
   domain_id   = data.linode_domain.basedomain.id
   record_type = "SRV"
-  service     = "_etcd-server-ssl"
-  protocol    = "_tcp"
+  service     = "etcd-server-ssl"
+  protocol    = "tcp"
   priority    = 0
   weight      = 10
   port        = 2380
 
-  target = "etcd-${count.index}.${var.cluster_name}"
+  target = "etcd-${count.index}.${var.cluster_name}.${local.basedomain}"
   count  = (var.node_type == "master" ? length(var.node_ips) : 0)
 }
 
