@@ -5,4 +5,4 @@
 
 # Project Contributors
 
-  - [Contributions](https://github.com/RedHatSI/openshift-packet-deploy/graphs/contributors)
+  - [Contributions](https://github.com/equinix/terraform-metal-openshift-on-baremetal/graphs/contributors)

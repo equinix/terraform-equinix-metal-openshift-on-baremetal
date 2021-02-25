@@ -1,16 +1,16 @@
-# Packet Public Cloud
+# Equinix Metal
 
-1. Sign up for a Packet Public Cloud account at https://app.packet.net/signup
+1. Sign up for a Equinix Metal account at https://console.equinix.com/signup
 
-2. Follow the wizard **"Getting Started with Packet"** at https://app.packet.net/getting-started/overview that guides you through creating a project.
+2. Follow the wizard **"Getting Started with Equinix Metal"** at https://console.equinix.com/getting-started/overview that guides you through creating a project.
 
 **IMPORTANT:**
 
-Using the Packet Public Cloud [web portal](https://app.packet.net/), upload one or more SSH keys to either your *"Personal Settings"* (personal SSH keys) or the newly created projects' *"Project Settings"* (project-level SSH keys).
+Using the Equinix Metal [web portal](https://console.equinix.com/), upload one or more SSH keys to either your *"Personal Settings"* (personal SSH keys) or the newly created projects' *"Project Settings"* (project-level SSH keys).
 
-These keys will be automatically added (to `.ssh/authorized_keys`) on every server created by you on the Packet Public Cloud. These keys must be generated for every SSH client you will be using to access these servers.
+These keys will be automatically added (to `.ssh/authorized_keys`) on every server created by you on the Equinix Metal. These keys must be generated for every SSH client you will be using to access these servers.
 
-See details at https://www.packet.com/developers/docs/servers/key-features/ssh-keys/
+See details at https://metal.equinix.com/developers/docs/servers/key-features/ssh-keys/
 
 One of these SSH keys must be generated in the host system used for driving the deployment. Copy location and names of these SSH key files on that system, they will be used later as values for `ssh_private_key_path` and `ssh_public_key_path` variables in the Terraform configuration.
 

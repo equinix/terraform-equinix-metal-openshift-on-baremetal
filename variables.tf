@@ -1,13 +1,14 @@
-variable "cf_email" {
-  description = "Your Cloudflare email address"
+
+variable "dns_provider" {
+  type        = string
+  description = "Name of the DNS module to use (cloudflare, linode)"
+  default     = "cloudflare"
 }
 
-variable "cf_api_key" {
-  description = "Your Cloudflare API key"
-}
-
-variable "cf_zone_id" {
-  description = "Your Cloudflare Zone"
+variable "dns_options" {
+  type        = any
+  description = "Options specific to the dns module. Check the documentation for the dns module for details. Example: {\"email\":\"\", \"api_key\": \"\"}"
+  default     = null
 }
 
 variable "cluster_basedomain" {
@@ -16,21 +17,11 @@ variable "cluster_basedomain" {
 
 
 variable "auth_token" {
-  description = "Your Packet API key"
+  description = "Your Equinix Metal API key"
 }
 
 variable "project_id" {
-  description = "Your Packet Project ID"
-}
-
-variable "ssh_private_key_path" {
-  description = "Your SSH private key path (used locally only)"
-  default     = "~/.ssh/id_rsa"
-}
-
-variable "ssh_public_key_path" {
-  description = "Your SSH public key path (used for install-config.yaml)"
-  default     = "~/.ssh/id_rsa.pub"
+  description = "Your Equinix Metal Project ID"
 }
 
 variable "bastion_operating_system" {
@@ -43,8 +34,8 @@ variable "facility" {
   default     = "dfw2"
 }
 
-variable "plan_master" {
-  description = "Plan for Master Nodes"
+variable "plan_controlplane" {
+  description = "Plan for Control Plane Nodes"
   default     = "c3.medium.x86"
 }
 
@@ -55,31 +46,31 @@ variable "plan_compute" {
 
 variable "count_bootstrap" {
   default     = "1"
-  description = "Number of Master Nodes."
+  description = "Number of Control Plane Nodes."
 }
 
-variable "count_master" {
+variable "count_controlplane" {
   default     = "3"
-  description = "Number of Master Nodes."
+  description = "Number of Control Plane Nodes."
 }
 
 variable "count_compute" {
-  default = "2"
+  default     = "2"
   description = "Number of Compute Nodes"
 }
 
 variable "cluster_name" {
-  default = "jr"
+  default     = "metal"
   description = "Cluster name label"
 }
 
 variable "ocp_version" {
-  default = "4.5"
+  default     = "4.5"
   description = "OpenShift minor release version"
 }
 
 variable "ocp_version_zstream" {
-  default = "2"
+  default     = "2"
   description = "OpenShift zstream version"
 }
 
@@ -90,7 +81,7 @@ variable "ocp_cluster_manager_token" {
 variable "ocp_storage_nfs_enable" {
   description = "Enable configuration of NFS and NFS-related k8s provisioner/storageClass"
   default     = true
-} 
+}
 variable "ocp_storage_ocs_enable" {
   description = "Enable installation of OpenShift Container Storage via operator. This requires a minimum of 3 worker nodes"
   default     = false

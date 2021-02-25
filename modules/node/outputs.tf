@@ -1,3 +1,7 @@
 output "node_ip" {
-    value = packet_device.node.*.access_public_ipv4
+  value = metal_device.node.*.access_public_ipv4
+}
+
+output "finished" {
+  value = "Provisioning node type ${var.node_type} finished."
 }

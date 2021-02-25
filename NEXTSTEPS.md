@@ -4,7 +4,7 @@ Now that your cluster is up and running you can start tackling Day 2 operations 
 
 ## Scaling Compute
 
-Adding worker nodes to your cluster on Packet is trivial since the provisioning process is largely automated, but there are supplemental considerations if your cluster has been running for more than 24+ hours: https://access.redhat.com/solutions/4799921. 
+Adding worker nodes to your cluster on Equinix Metal is trivial since the provisioning process is largely automated, but there are supplemental considerations if your cluster has been running for more than 24+ hours: https://access.redhat.com/solutions/4799921. 
 
 If your cluster has been deployed/running for *less than 24 hours* you can scale compute by incrementing the `count_compute` value in `vars.tf` or your sourced environment including `TF_VAR_count_compute` and rerunning `terraform apply`. For example, if you initially deploy 3 worker compute nodes by setting `TF_VAR_count_compute=3` and you'd like to scale to 5 nodes, you would simply re-execute your terraform apply (*NOTE: this example does NOT persist the count value for your compute nodes. You should permanently set `count_compute` or `TF_VAR_count_compute`*:
 ```bash
@@ -21,7 +21,7 @@ oc get csr -oname | xargs oc adm certificate approve
 If your cluster has been deploymed/running for *24 hours or more* you must update your bastion-hosted `worker.ign` file before scaling:
 ```bash
 export KUBECONFIG="/tmp/artifacts/install/auth/kubeconfig"      ## Update to kubeconfig location
-source ~/.packet-vars
+source ~/.metal-vars
 
 # Pre-scaling
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} << EOF
@@ -42,7 +42,7 @@ This can be executed from your bastion host, or locally depending on your OS:
 
 Shortcut using existing `TF_VAR_` variables:
 ```bash
-bash extras/1_configure_ingresscerts.sh
+bash assets/1_configure_ingresscerts.sh
 ```
 
 Optionally customize the parameters/variables before execution:
@@ -86,18 +86,18 @@ oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p '{"
 
 ## OpenShift Virtualization (CNV/kubevirt)
 
-If you're interested in evaluating OpenShift virtualization, enable the appropriate operator and subscription using the `extras` provided:
+If you're interested in evaluating OpenShift virtualization, enable the appropriate operator and subscription using the `assets` provided:
 
 ```
-oc apply -f extras/cnv/1_cnv_operator_subscription.yaml
+oc apply -f assets/cnv/1_cnv_operator_subscription.yaml
 
 ## Optionally, enable hostPath provisioner (recommended/required if not using OCS)
-oc apply -f extras/cnv/2_cnv_hostpath_provisioner.yaml
+oc apply -f assets/cnv/2_cnv_hostpath_provisioner.yaml
 ```
 
 ## Troubleshooting
 
-### Packet
+### Equinix Metal
 
-If you encounter issues with a specific Packet host you may need to leverage Packet's *Out-of-Band Console* to troubleshoot. This is slightly difficult given CoreOS reverts the initial serial console target, which we configure as `console=ttyS1,115200n8` during *Custom iPXE* boot. After successful installation of CoreOS this is reverted to the default `console=ttyS0,115200n8`. While rebooting a host you can modify the kernel command line argument by hitting `e` when you see the grub menu entry for CoreOS. Change `ttyS0` to `ttyS1` and press `CTL+X` to continue booting.
+If you encounter issues with a specific Equinix Metal host you may need to leverage Equinix Metal's *Out-of-Band Console* to troubleshoot. This is slightly difficult given CoreOS reverts the initial serial console target, which we configure as `console=ttyS1,115200n8` during *Custom iPXE* boot. After successful installation of CoreOS this is reverted to the default `console=ttyS0,115200n8`. While rebooting a host you can modify the kernel command line argument by hitting `e` when you see the grub menu entry for CoreOS. Change `ttyS0` to `ttyS1` and press `CTL+X` to continue booting.
 

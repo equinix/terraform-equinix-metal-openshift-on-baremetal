@@ -16,7 +16,7 @@ compute:
 controlPlane:
   hyperthreading: Enabled   
   name: master
-  replicas: ${count_master}
+  replicas: ${count_controlplane}
 platform:
   none: {}
-sshKey: '${trimspace(file("${ssh_public_key_path}"))}'
+sshKey: '${ssh_public_key}'

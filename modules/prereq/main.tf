@@ -1,17 +1,3 @@
-variable "cluster_name" {}
-variable "cluster_basedomain" {}
-variable "ocp_version" {}
-variable "ssh_public_key_path" {}
-variable "ssh_private_key_path" {}
-variable "count_master" {}
-variable "count_compute" {}
-variable "bastion_ip" {}
-variable "ocp_api_token" {}
-variable "depends" {
-  type    = any
-  default = null
-}
-
 resource "null_resource" "ocp_installer" {
 
   depends_on = [var.depends]
@@ -23,8 +9,8 @@ resource "null_resource" "ocp_installer" {
       host        = var.bastion_ip
     }
 
-    source       = "${path.module}/scripts/get-ocp-installer.sh"
-    destination  = "/tmp/get-ocp-installer.sh"
+    source      = "${path.module}/assets/get-ocp-installer.sh"
+    destination = "/tmp/get-ocp-installer.sh"
   }
 
   provisioner "remote-exec" {
@@ -52,8 +38,8 @@ resource "null_resource" "ocp_pullsecret" {
       host        = var.bastion_ip
     }
 
-    source       = "${path.module}/scripts/get-pull-secret.sh"
-    destination  = "/tmp/get-pull-secret.sh"
+    source      = "${path.module}/assets/get-pull-secret.sh"
+    destination = "/tmp/get-pull-secret.sh"
   }
 
   provisioner "remote-exec" {
@@ -72,13 +58,13 @@ resource "null_resource" "ocp_pullsecret" {
 
 data "template_file" "installer_config" {
   depends_on = [null_resource.ocp_pullsecret, null_resource.ocp_installer]
-  template = "${file("${path.module}/install-config.yaml.tpl")}"
+  template   = file("${path.module}/assets/install-config.yaml.tpl")
   vars = {
-    cluster_name         = var.cluster_name
-    cluster_basedomain   = var.cluster_basedomain
-    ssh_public_key_path = var.ssh_public_key_path
-    count_master         = var.count_master
-    count_compute        = var.count_compute
+    cluster_name       = var.cluster_name
+    cluster_basedomain = var.cluster_basedomain
+    ssh_public_key     = var.ssh_public_key
+    count_controlplane = var.count_controlplane
+    count_compute      = var.count_compute
   }
 }
 
@@ -92,8 +78,8 @@ resource "null_resource" "ocp_install_config" {
       host        = var.bastion_ip
     }
 
-    content       = data.template_file.installer_config.rendered
-    destination  = "/tmp/artifacts/install/install-config.yaml"
+    content     = data.template_file.installer_config.rendered
+    destination = "/tmp/artifacts/install/install-config.yaml"
   }
 
   provisioner "remote-exec" {
@@ -117,7 +103,7 @@ resource "null_resource" "ocp_install_manifests" {
       private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
-    
+
     inline = [
       "timedatectl set-ntp no",
       "new_time=`date '+%Y-%m-%d %H:%M:%S' -d '-8 hours'`",
@@ -133,11 +119,3 @@ resource "null_resource" "ocp_install_manifests" {
     ]
   }
 }
-
-
-output "finished" {
-    depends_on = [null_resource.ocp_install_manifests]
-    value      = "OpenShift manifest and ignition creation finshed. Bastion IP: ${var.bastion_ip}"
-}
-
-

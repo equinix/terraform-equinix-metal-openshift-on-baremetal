@@ -30,7 +30,7 @@ cat << EOF | oc apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: packet-liveaverage
+  name: metal-example
 spec: {}
 ---
 apiVersion: kubevirt.io/v1alpha3
@@ -41,7 +41,7 @@ metadata:
     kubevirt.io/storage-observed-api-version: v1alpha3
     name.os.template.kubevirt.io/win2k19: Microsoft Windows Server 2019
   name: eval19
-  namespace: packet-liveaverage
+  namespace: metal-example
   labels:
     app: eval19
     flavor.template.kubevirt.io/large: 'true'
@@ -144,5 +144,5 @@ spec:
 EOF
 
 ## Expose your VM for RDP Access
-## oc project packet-liveaverage
+## oc project metal-example
 ## virtctl expose vm eval19 --port=3389 --target-port=3389 --name=eval-rdp --type=NodePort

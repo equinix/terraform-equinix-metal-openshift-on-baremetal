@@ -1,7 +1,7 @@
 stream {
     upstream backend_api {
         server ${bootstrap_ip}:6443;
-${expanded_masters}
+${expanded_controlplane}
     }
 
     server {
