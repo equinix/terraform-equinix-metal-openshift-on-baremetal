@@ -18,6 +18,7 @@ variable "cluster_basedomain" {
 
 variable "auth_token" {
   description = "Your Equinix Metal API key"
+  sensitive   = true
 }
 
 variable "project_id" {
@@ -76,6 +77,7 @@ variable "ocp_version_zstream" {
 
 variable "ocp_cluster_manager_token" {
   description = "OpenShift Cluster Manager API Token used to generate your pullSecret (https://cloud.redhat.com/openshift/token)"
+  sensitive   = true
 }
 
 variable "ocp_storage_nfs_enable" {

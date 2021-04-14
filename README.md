@@ -77,7 +77,7 @@ cd terraform-metal-openshift
 1. Initialize and validate terraform:
 
     ```bash
-    terraform init
+    terraform init -upgrade
     terraform validate
     ```
 
