@@ -56,7 +56,7 @@ cd terraform-metal-openshift
 
 ## Usage
 
-1. Follow [this](PACKET.md) to configure your Equinix Metal project and collect required parameters.
+1. Follow [this](EQUINIX.md) to configure your Equinix Metal project and collect required parameters.
 
 1. Follow [this](CLOUDFLARE.md) to configure your Cloudflare account and collect required parameters.
 
