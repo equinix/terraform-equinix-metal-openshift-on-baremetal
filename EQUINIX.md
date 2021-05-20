@@ -8,7 +8,7 @@
 
 Using the Equinix Metal [web portal](https://console.equinix.com/), upload one or more SSH keys to either your *"Personal Settings"* (personal SSH keys) or the newly created projects' *"Project Settings"* (project-level SSH keys).
 
-These keys will be automatically added (to `.ssh/authorized_keys`) on every server created by you on the Equinix Metal. These keys must be generated for every SSH client you will be using to access these servers.
+These keys will be automatically added (to `.ssh/authorized_keys`) on every server created by you on Equinix Metal. These keys must be generated for every SSH client you will be using to access these servers.
 
 See details at https://metal.equinix.com/developers/docs/servers/key-features/ssh-keys/
 
