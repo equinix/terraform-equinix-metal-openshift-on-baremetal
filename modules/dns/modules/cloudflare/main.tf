@@ -52,7 +52,7 @@ resource "cloudflare_record" "dns_srv_etcd" {
   name    = "_etcd-server-ssl._tcp"
   count   = (var.node_type == "master" ? length(var.node_ips) : 0)
 
-  data = {
+  data {
     service  = "_etcd-server-ssl"
     proto    = "_tcp"
     name     = "${var.cluster_name}.${var.cluster_basedomain}"
