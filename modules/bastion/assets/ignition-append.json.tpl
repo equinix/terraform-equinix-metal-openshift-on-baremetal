@@ -1,15 +1,13 @@
 {
    "ignition": {
       "config": {
-        "append": [
+        "merge": [
           {
             "source": "http://${ bastion_ip }:8080/${ node_type }.ign",
             "verification": {}
           }
         ]
     },
-    "security": {},
-    "timeouts": {},
     "version": "3.2.0"
    },
    "storage": {
@@ -34,7 +32,5 @@
          }
       ]
    },
-  "networkd": {},
-  "passwd": {},
-  "systemd": {}
+  "passwd":{}
 }

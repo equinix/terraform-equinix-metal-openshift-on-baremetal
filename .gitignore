@@ -1,6 +1,7 @@
 .terraform
 .terraform*
 !.terraform.lock.hcl
+ignition.bu
 terraform.tfstate
 terraform.tfstate.backup
 terraform/.terraform
