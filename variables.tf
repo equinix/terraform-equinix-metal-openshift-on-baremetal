@@ -32,7 +32,7 @@ variable "bastion_operating_system" {
 
 variable "facility" {
   description = "Your primary facility"
-  default     = "dfw2"
+  default     = "da11"
 }
 
 variable "plan_controlplane" {
