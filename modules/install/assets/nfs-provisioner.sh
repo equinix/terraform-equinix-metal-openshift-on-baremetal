@@ -29,11 +29,14 @@ sed -i'' "s/\/ifs\/kubernetes/\/mnt\/nfs\/ocp/g" $RDIR/artifacts/install/nfsp-de
 sed -i'' "s/fuseim.*/storage.io\/nfs/g" $RDIR/artifacts/install/nfsp-deployment.yaml
 sed -i'' "s/fuseim.*/storage.io\/nfs/g" $RDIR/artifacts/install/nfsp-class.yaml
 
+# Fix for k8s 1.20+ -- use image k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
+sed -i'' "s/image:.*/image: k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2/g" $RDIR/artifacts/install/nfsp-deployment.yaml
+
 # Apply manifests and set appropriate permissions
-$oc create -f $RDIR/artifacts/install/nfsp-rbac.yaml
+$oc apply -f $RDIR/artifacts/install/nfsp-rbac.yaml
 $oc adm policy add-scc-to-user hostmount-anyuid system:serviceaccount:$NAMESPACE:nfs-client-provisioner
-$oc create -f $RDIR/artifacts/install/nfsp-class.yaml
-$oc create -f $RDIR/artifacts/install/nfsp-deployment.yaml
+$oc apply -f $RDIR/artifacts/install/nfsp-class.yaml
+$oc apply -f $RDIR/artifacts/install/nfsp-deployment.yaml
 
 # Set class as cluster-wide default
 $oc patch storageclass managed-nfs-storage -p '{"metadata": {"annotations": {"storageclass.kubernetes.io/is-default-class": "true"}}}'

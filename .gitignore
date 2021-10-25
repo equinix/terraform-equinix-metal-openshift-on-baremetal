@@ -16,3 +16,4 @@ artifacts/
 auth/
 *.swp
 .vscode
+assets/cnv/sample/
