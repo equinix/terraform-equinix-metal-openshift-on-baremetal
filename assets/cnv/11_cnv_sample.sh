@@ -4,10 +4,11 @@
 #storageclass="hostpath-provisioner"
 #storageclass="ocs-storagecluster-cephfs"
 storageclass="managed-nfs-storage"
+ssh_pub=`cat ~/.ssh/id_rsa.pub`
 
 ## Install virtctl client on the bastion/LB
 
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} 'wget https://github.com/kubevirt/kubevirt/releases/download/v0.30.1/virtctl-v0.30.1-linux-amd64 -O /usr/bin/virtctl ; chmod a+x /usr/bin/virtctl'
+ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} 'wget https://github.com/kubevirt/kubevirt/releases/download/v0.46.1/virtctl-v0.46.1-linux-amd64 -O /usr/bin/virtctl ; chmod a+x /usr/bin/virtctl'
 
 ## Stage a Windows 2019 image from Vagrant on you bastion/LB
 
@@ -137,16 +138,14 @@ spec:
               name: default
               ssh_authorized_keys:
                 - >-
-                  ssh-rsa
-                  AAAAB3NzaC1yc2EAAAADAQABAAABAQDTcRiMEulKlNUqpy6Kb2wIAe6mKbdeZxUZIDll+MmcPa814fJIY0agGyFdQxQqgL1bQwU6e7OPD5IMsUIHeah0w3lWwxKZ7d4so/OE6BQVKmNOMepBygcr7EvQxkHC2kbp9wshc6m8rnuEnwKOr4nonwpKH6s4ok9Xf9IYimN4ovCQUYh9f0V7e1Y/KP9wqJqeWHZOpmICY+LTPi9JFGOT8aWEbFHHPvqYqzf0pJKrJnBreG6FBVCgam4ve/LbWql/1/nJDHY0V7dwBwopVXJUU27E68je70s7zYavsdZwESUmuhgG2cE0zM8rZY2ynZth+8AgtiHCgov88c2x9jSp
-                  Public-SSH-Key
+                  ${ssh_pub}
               hostname: eval19
           name: cloudinitdisk
 EOF
 
-## Expose your VM for RDP Access
-## oc project metal-example
-## virtctl expose vm eval19 --port=3389 --target-port=3389 --name=eval-rdp --type=NodePort
+# Expose your VM for RDP Access
+# oc project metal-example
+# virtctl expose vm eval19 --port=3389 --target-port=3389 --name=eval-rdp --type=NodePort
 
 cat << EOF | oc apply -f -
 apiVersion: kubevirt.io/v1alpha3
@@ -155,13 +154,10 @@ metadata:
   annotations:
     kubevirt.io/latest-observed-api-version: v1alpha3
     kubevirt.io/storage-observed-api-version: v1alpha3
-    name.os.template.kubevirt.io/win2k19: Microsoft Windows Server 2019
   name: eval-centos8
   namespace: metal-example
   labels:
     app: eval-centos8
-    flavor.template.kubevirt.io/large: 'true'
-    os.template.kubevirt.io/win2k19: 'true'
     workload.template.kubevirt.io/server: 'true'
 spec:
   dataVolumeTemplates:
@@ -188,11 +184,8 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        flavor.template.kubevirt.io/large: 'true'
-        kubevirt.io/domain: eval19
-        kubevirt.io/size: large
-        os.template.kubevirt.io/win2k19: 'true'
-        vm.kubevirt.io/name: eval19
+        kubevirt.io/domain: eval-centos8
+        vm.kubevirt.io/name: eval-centos8
         workload.template.kubevirt.io/server: 'true'
     spec:
       domain:
@@ -232,29 +225,34 @@ spec:
               spinlocks: 8191
             vapic: {}
         machine:
-          type: pc-q35-rhel8.1.0
+          type: pc-q35-rhel8.4.0
         resources:
           requests:
-            memory: 8Gi
+            memory: 2Gi
       evictionStrategy: LiveMigrate
-      hostname: eval19
+      hostname: eval-centos8
       networks:
         - name: nic0
           pod: {}
       terminationGracePeriodSeconds: 0
       volumes:
         - dataVolume:
-            name: eval19-rootdisk
+            name: eval-centos8-rootdisk
           name: rootdisk
         - cloudInitNoCloud:
             userData: |
               #cloud-config
+              user: vagrant
+              password: vagrant
+              ssh_pwauth: True
+              chpasswd:
+                expire: false
               name: default
               ssh_authorized_keys:
                 - >-
-                  ssh-rsa
-                  AAAAB3NzaC1yc2EAAAADAQABAAABAQDTcRiMEulKlNUqpy6Kb2wIAe6mKbdeZxUZIDll+MmcPa814fJIY0agGyFdQxQqgL1bQwU6e7OPD5IMsUIHeah0w3lWwxKZ7d4so/OE6BQVKmNOMepBygcr7EvQxkHC2kbp9wshc6m8rnuEnwKOr4nonwpKH6s4ok9Xf9IYimN4ovCQUYh9f0V7e1Y/KP9wqJqeWHZOpmICY+LTPi9JFGOT8aWEbFHHPvqYqzf0pJKrJnBreG6FBVCgam4ve/LbWql/1/nJDHY0V7dwBwopVXJUU27E68je70s7zYavsdZwESUmuhgG2cE0zM8rZY2ynZth+8AgtiHCgov88c2x9jSp
-                  Public-SSH-Key
-              hostname: eval19
+                  ${ssh_pub}
+              hostname: eval-centos8
           name: cloudinitdisk
 EOF
+
+# virtctl expose vm eval-centos8 --port=22 --target-port=22 --name=eval-centos8 --type=NodePort

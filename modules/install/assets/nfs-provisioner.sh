@@ -30,7 +30,7 @@ sed -i'' "s/fuseim.*/storage.io\/nfs/g" $RDIR/artifacts/install/nfsp-deployment.
 sed -i'' "s/fuseim.*/storage.io\/nfs/g" $RDIR/artifacts/install/nfsp-class.yaml
 
 # Fix for k8s 1.20+ -- use image k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2
-sed -i'' "s/image:.*/image: k8s.gcr.io/sig-storage/nfs-subdir-external-provisioner:v4.0.2/g" $RDIR/artifacts/install/nfsp-deployment.yaml
+sed -i'' "s/image:.*/image: k8s.gcr.io\/sig-storage\/nfs-subdir-external-provisioner:v4.0.2/g" $RDIR/artifacts/install/nfsp-deployment.yaml
 
 # Apply manifests and set appropriate permissions
 $oc apply -f $RDIR/artifacts/install/nfsp-rbac.yaml
