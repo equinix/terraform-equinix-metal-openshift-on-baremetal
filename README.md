@@ -62,7 +62,7 @@ cd terraform-metal-openshift
 
 1. [Obtain an OpenShift Cluster Manager API Token](https://cloud.redhat.com/openshift/token) for pullSecret generation.
 
-1. Configure TF_VARs applicable to your Equinix Metal project, Cloudflare zone, and OpenShift API Token:
+1. Configure TF_VARs applicable to your Equinix Metal project, DNS settings, and OpenShift API Token:
 
     ```bash
     export TF_VAR_project_id="kajs886-l59-8488-19910kj"
@@ -70,8 +70,8 @@ cd terraform-metal-openshift
 
     export TF_VAR_cluster_basedomain="domain.com"
     export TF_VAR_ocp_cluster_manager_token="eyJhbGc...d8Agva"
-    export TF_VAR_dns_provider = "cloudflare"
-    export TF_VAR_dns_options = {"api_token": "abc..."}
+    export TF_VAR_dns_provider = "cloudflare" # aws and linode are also supported
+    export TF_VAR_dns_options = {"api_token": "abc..."} # needed for aws and linode
     ```
 
 1. Initialize and validate terraform:
