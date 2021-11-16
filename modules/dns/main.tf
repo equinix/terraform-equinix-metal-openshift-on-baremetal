@@ -5,13 +5,14 @@
 
 provider "cloudflare" {
   api_token = try(var.dns_options.api_token, "")
-  api_key   = try(var.dns_options.api_key, "")
+  api_key   = try(var.dns_options.api_key, null)
   email     = try(var.dns_options.email, "")
 }
 
 provider "linode" {
   token = try(var.dns_options.api_token, "")
 }
+
 module "cloudflare" {
   count  = (var.dns_provider == "cloudflare") ? 1 : 0
   source = "./modules/cloudflare"
@@ -21,7 +22,6 @@ module "cloudflare" {
   cluster_basedomain = var.cluster_basedomain
   node_ips           = var.node_ips
 }
-
 
 module "linode" {
   count  = (var.dns_provider == "linode") ? 1 : 0

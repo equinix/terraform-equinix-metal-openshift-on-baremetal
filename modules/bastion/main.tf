@@ -33,9 +33,9 @@ locals {
   coreos_baseurl = "http://54.172.173.155/pub/openshift-v4/dependencies/rhcos"
   coreos_url     = "${local.coreos_baseurl}/${var.ocp_version}/${var.ocp_version}.${var.ocp_version_zstream}"
   coreos_filenm  = "rhcos-${var.ocp_version}.${var.ocp_version_zstream}-${local.arch}"
-  coreos_img     = "${local.coreos_filenm}-metal.${local.arch}.raw.gz"
-  coreos_kernel  = "${local.coreos_filenm}-installer-kernel-${local.arch}"
-  coreos_initrd  = "${local.coreos_filenm}-installer-initramfs.${local.arch}.img"
+  coreos_img     = "${local.coreos_filenm}-live-rootfs.${local.arch}.img"
+  coreos_kernel  = "${local.coreos_filenm}-live-kernel-${local.arch}"
+  coreos_initrd  = "${local.coreos_filenm}-live-initramfs.${local.arch}.img"
 
 }
 

@@ -10,8 +10,14 @@ export LE_WILDCARD=$(oc get ingresscontroller default -n openshift-ingress-opera
 export CERTDIR=$HOME/certificates
 
 # Install acme.sh
-curl https://get.acme.sh | sh
+curl https://get.acme.sh | sh -s -- install --force
 
+# Configure ZeroSSL account via email
+$HOME/.acme.sh/acme.sh --register-account -m ${CF_Email}
+
+# Set default CA to Let's Encrypt
+$HOME/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+ 
 # Request certificate with dns_cf
 $HOME/.acme.sh/acme.sh --issue -d ${LE_API} -d *.${LE_WILDCARD} --dns dns_cf
 
