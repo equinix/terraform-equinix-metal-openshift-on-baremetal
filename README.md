@@ -70,8 +70,8 @@ cd terraform-metal-openshift
 
     export TF_VAR_cluster_basedomain="domain.com"
     export TF_VAR_ocp_cluster_manager_token="eyJhbGc...d8Agva"
-    export TF_VAR_dns_provider = "cloudflare" # aws and linode are also supported
-    export TF_VAR_dns_options = {"api_token": "abc..."} # needed for aws and linode
+    export TF_VAR_dns_provider="cloudflare" # aws and linode are also supported
+    export TF_VAR_dns_options='{"email": "abc@xyz.com", "api_key": "...", "api_token": "..."}' # fields differ by DNS provider
     ```
 
 1. Initialize and validate terraform:
