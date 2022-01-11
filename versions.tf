@@ -8,7 +8,7 @@ terraform {
     }
     metal = {
       source  = "equinix/metal"
-      version = "1.1.0"
+      version = "3.2.1"
     }
     null = {
       source = "hashicorp/null"
