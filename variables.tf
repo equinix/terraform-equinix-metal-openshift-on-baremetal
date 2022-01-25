@@ -42,7 +42,7 @@ variable "plan_controlplane" {
 
 variable "plan_compute" {
   description = "Plan for Compute Nodes"
-  default     = "c2.medium.x86"
+  default     = "c3.medium.x86"
 }
 
 variable "count_bootstrap" {
