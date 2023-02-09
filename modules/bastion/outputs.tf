@@ -1,5 +1,5 @@
 output "lb_ip" {
-  value = metal_device.lb.access_public_ipv4
+  value = equinix_metal_device.lb.access_public_ipv4
 }
 
 output "finished" {

@@ -3,26 +3,26 @@ data "template_file" "user_data" {
 }
 
 data "template_file" "ipxe_script" {
-  depends_on = [metal_device.lb]
+  depends_on = [equinix_metal_device.lb]
   for_each   = toset(var.nodes)
   template   = file("${path.module}/assets/ipxe.tpl")
 
   vars = {
     node_type           = each.value
-    bastion_ip          = metal_device.lb.access_public_ipv4
+    bastion_ip          = equinix_metal_device.lb.access_public_ipv4
     ocp_version         = var.ocp_version
     ocp_version_zstream = var.ocp_version_zstream
   }
 }
 
 data "template_file" "ignition_append" {
-  depends_on = [metal_device.lb]
+  depends_on = [equinix_metal_device.lb]
   for_each   = toset(var.nodes)
   template   = file("${path.module}/assets/ignition-append.json.tpl")
 
   vars = {
     node_type          = each.value
-    bastion_ip         = metal_device.lb.access_public_ipv4
+    bastion_ip         = equinix_metal_device.lb.access_public_ipv4
     cluster_name       = var.cluster_name
     cluster_basedomain = var.cluster_basedomain
   }
@@ -39,7 +39,7 @@ locals {
 
 }
 
-resource "metal_device" "lb" {
+resource "equinix_metal_device" "lb" {
   hostname         = "lb-0.${var.cluster_name}.${var.cluster_basedomain}"
   plan             = var.plan
   facilities       = [var.facility]
@@ -56,7 +56,7 @@ resource "null_resource" "dircheck" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -76,7 +76,7 @@ resource "null_resource" "ocp_install_ignition" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -98,7 +98,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
     content     = each.value.rendered
@@ -109,7 +109,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -128,7 +128,7 @@ resource "null_resource" "ignition_append_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
     content     = each.value.rendered
@@ -139,7 +139,7 @@ resource "null_resource" "ignition_append_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
