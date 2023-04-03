@@ -46,20 +46,6 @@ locals {
   haproxy_cfg_file = "/etc/haproxy/haproxy.cfg"
 }
 
-data "template_file" "haproxy_lb" {
-  depends_on = [var.depends]
-  template   = file("${path.module}/assets/haproxy.cfg.tpl")
-
-  vars = {
-    expanded_controlplane  = local.expanded_controlplane
-    expanded_compute_http  = tonumber(var.count_compute) >= 1 ? local.expanded_compute_http : local.expanded_controlplane_http
-    expanded_compute_https = tonumber(var.count_compute) >= 1 ? local.expanded_compute_https : local.expanded_controlplane_https
-    expanded_mcs           = local.expanded_mcs
-    expanded_bootstrap_api = local.expanded_bootstrap_api
-    expanded_bootstrap_mcs = local.expanded_bootstrap_mcs
-  }
-}
-
 resource "null_resource" "reconfig_lb" {
 
   depends_on = [var.depends]
@@ -71,7 +57,14 @@ resource "null_resource" "reconfig_lb" {
       host        = var.bastion_ip
     }
 
-    content     = data.template_file.haproxy_lb.rendered
+    content = templatefile("${path.module}/assets/haproxy.cfg.tpl", {
+      expanded_controlplane  = local.expanded_controlplane
+      expanded_compute_http  = tonumber(var.count_compute) >= 1 ? local.expanded_compute_http : local.expanded_controlplane_http
+      expanded_compute_https = tonumber(var.count_compute) >= 1 ? local.expanded_compute_https : local.expanded_controlplane_https
+      expanded_mcs           = local.expanded_mcs
+      expanded_bootstrap_api = local.expanded_bootstrap_api
+      expanded_bootstrap_mcs = local.expanded_bootstrap_mcs
+    })
     destination = local.haproxy_cfg_file
   }
 
@@ -135,13 +128,6 @@ resource "null_resource" "ocp_installer_wait_for_bootstrap" {
   }
 }
 
-data "template_file" "nfs_exports" {
-  template = <<-EOT
-    ${local.expanded_controlplane_nfs}
-    ${local.expanded_compute_nfs}
-    EOT
-}
-
 resource "null_resource" "reconfig_nfs_exports" {
 
   depends_on = [var.depends]
@@ -153,7 +139,10 @@ resource "null_resource" "reconfig_nfs_exports" {
       host        = var.bastion_ip
     }
 
-    content     = data.template_file.nfs_exports.rendered
+    content     = <<-EOT
+    ${local.expanded_controlplane_nfs}
+    ${local.expanded_compute_nfs}
+    EOT
     destination = "/etc/exports"
   }
 

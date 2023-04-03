@@ -1,33 +1,3 @@
-data "template_file" "user_data" {
-  template = file("${path.module}/assets/user_data_${var.operating_system}.sh")
-}
-
-data "template_file" "ipxe_script" {
-  depends_on = [metal_device.lb]
-  for_each   = toset(var.nodes)
-  template   = file("${path.module}/assets/ipxe.tpl")
-
-  vars = {
-    node_type           = each.value
-    bastion_ip          = metal_device.lb.access_public_ipv4
-    ocp_version         = var.ocp_version
-    ocp_version_zstream = var.ocp_version_zstream
-  }
-}
-
-data "template_file" "ignition_append" {
-  depends_on = [metal_device.lb]
-  for_each   = toset(var.nodes)
-  template   = file("${path.module}/assets/ignition-append.json.tpl")
-
-  vars = {
-    node_type          = each.value
-    bastion_ip         = metal_device.lb.access_public_ipv4
-    cluster_name       = var.cluster_name
-    cluster_basedomain = var.cluster_basedomain
-  }
-}
-
 locals {
   arch           = "x86_64"
   coreos_baseurl = "http://54.172.173.155/pub/openshift-v4/dependencies/rhcos"
@@ -46,8 +16,7 @@ resource "metal_device" "lb" {
   operating_system = var.operating_system
   billing_cycle    = var.billing_cycle
   project_id       = var.project_id
-  user_data        = data.template_file.user_data.rendered
-
+  user_data        = file("${path.module}/assets/user_data_${var.operating_system}.sh")
 }
 
 resource "null_resource" "dircheck" {
@@ -91,8 +60,8 @@ resource "null_resource" "ocp_install_ignition" {
 
 resource "null_resource" "ipxe_files" {
 
-  depends_on = [null_resource.dircheck]
-  for_each   = data.template_file.ipxe_script
+  depends_on = [metal_device.lb, null_resource.dircheck]
+  for_each   = toset(var.nodes)
 
   provisioner "file" {
 
@@ -101,7 +70,12 @@ resource "null_resource" "ipxe_files" {
       host        = metal_device.lb.access_public_ipv4
     }
 
-    content     = each.value.rendered
+    content = templatefile("${path.module}/assets/ipxe.tpl", {
+      node_type           = each.value
+      bastion_ip          = metal_device.lb.access_public_ipv4
+      ocp_version         = var.ocp_version
+      ocp_version_zstream = var.ocp_version_zstream
+    })
     destination = "/usr/share/nginx/html/${each.key}.ipxe"
   }
 
@@ -121,8 +95,8 @@ resource "null_resource" "ipxe_files" {
 
 resource "null_resource" "ignition_append_files" {
 
-  depends_on = [null_resource.dircheck]
-  for_each   = data.template_file.ignition_append
+  depends_on = [metal_device.lb, null_resource.dircheck]
+  for_each   = toset(var.nodes)
 
   provisioner "file" {
 
@@ -131,7 +105,12 @@ resource "null_resource" "ignition_append_files" {
       host        = metal_device.lb.access_public_ipv4
     }
 
-    content     = each.value.rendered
+    content = templatefile("${path.module}/assets/ignition-append.json.tpl", {
+      node_type          = each.value
+      bastion_ip         = metal_device.lb.access_public_ipv4
+      cluster_name       = var.cluster_name
+      cluster_basedomain = var.cluster_basedomain
+    })
     destination = "/usr/share/nginx/html/${each.key}-append.ign"
   }
 
