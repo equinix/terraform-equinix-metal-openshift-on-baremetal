@@ -7,9 +7,9 @@ if [ -f $RDIR/artifacts/openshift-install.tar.gz ] && [ -f $RDIR/artifacts/oc.ta
 	echo 'Openshift Installer Exists'
 else
 	mkdir $RDIR/artifacts;
-	curl http://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-${OCP_VERSION}/openshift-install-linux.tar.gz \
+	curl -L http://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest-${OCP_VERSION}/openshift-install-linux.tar.gz \
 		--output $RDIR/artifacts/openshift-install.tar.gz;
-        curl http://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz \
+        curl -L http://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz \
                 --output $RDIR/artifacts/oc.tar.gz;
 fi
 
