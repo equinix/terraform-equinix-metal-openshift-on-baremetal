@@ -30,7 +30,7 @@ data "template_file" "ignition_append" {
 
 locals {
   arch           = "x86_64"
-  coreos_baseurl = "http://54.172.173.155/pub/openshift-v4/dependencies/rhcos"
+  coreos_baseurl = "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos"
   coreos_url     = "${local.coreos_baseurl}/${var.ocp_version}/${var.ocp_version}.${var.ocp_version_zstream}"
   coreos_filenm  = "rhcos-${var.ocp_version}.${var.ocp_version_zstream}-${local.arch}"
   coreos_img     = "${local.coreos_filenm}-live-rootfs.${local.arch}.img"
