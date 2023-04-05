@@ -14,7 +14,7 @@ module "bastion" {
 
   project_id           = var.project_id
   facility             = var.facility
-  plan                 = var.plan_controlplane
+  plan                 = var.plan_bastion
   operating_system     = var.bastion_operating_system
   ssh_private_key_path = module.sshkey.ssh_private_key_file
   cluster_name         = var.cluster_name
