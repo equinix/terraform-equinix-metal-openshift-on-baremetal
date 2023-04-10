@@ -30,19 +30,19 @@ variable "bastion_operating_system" {
   default     = "rhel_7"
 }
 
-variable "facility" {
-  description = "Your primary facility"
-  default     = "da11"
+variable "metro" {
+  description = "Your primary metro"
+  default     = "da"
 }
 
 variable "plan_controlplane" {
   description = "Plan for Control Plane Nodes"
-  default     = "c3.medium.x86"
+  default     = "c3.small.x86"
 }
 
 variable "plan_compute" {
   description = "Plan for Compute Nodes"
-  default     = "c2.medium.x86"
+  default     = "c3.small.x86"
 }
 
 variable "count_bootstrap" {

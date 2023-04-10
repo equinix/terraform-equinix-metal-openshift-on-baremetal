@@ -12,7 +12,7 @@ locals {
 resource "metal_device" "lb" {
   hostname         = "lb-0.${var.cluster_name}.${var.cluster_basedomain}"
   plan             = var.plan
-  facilities       = [var.facility]
+  metro            = var.metro
   operating_system = var.operating_system
   billing_cycle    = var.billing_cycle
   project_id       = var.project_id
@@ -50,9 +50,9 @@ resource "null_resource" "ocp_install_ignition" {
 
 
     inline = [
-      "curl -o /usr/share/nginx/html/${local.coreos_img} ${local.coreos_url}/${local.coreos_img}",
-      "curl -o /usr/share/nginx/html/${local.coreos_kernel} ${local.coreos_url}/${local.coreos_kernel}",
-      "curl -o /usr/share/nginx/html/${local.coreos_initrd} ${local.coreos_url}/${local.coreos_initrd}",
+      "curl -fsSL -o /usr/share/nginx/html/${local.coreos_img} ${local.coreos_url}/${local.coreos_img}",
+      "curl -fsSL -o /usr/share/nginx/html/${local.coreos_kernel} ${local.coreos_url}/${local.coreos_kernel}",
+      "curl -fsSL -o /usr/share/nginx/html/${local.coreos_initrd} ${local.coreos_url}/${local.coreos_initrd}",
       "chmod -R 0755 /usr/share/nginx/html/"
     ]
   }

@@ -21,7 +21,7 @@ resource "metal_ssh_key" "ssh_pub_key" {
 }
 
 resource "local_file" "cluster_private_key_pem" {
-  content         = chomp(tls_private_key.ssh_key_pair.private_key_pem)
+  content         = chomp(tls_private_key.ssh_key_pair.private_key_openssh)
   filename        = pathexpand(format("~/.ssh/%s", local.ssh_key_name))
   file_permission = "0600"
 }

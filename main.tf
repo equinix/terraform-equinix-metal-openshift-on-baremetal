@@ -13,7 +13,7 @@ module "bastion" {
   depends_on = [module.sshkey]
 
   project_id           = var.project_id
-  facility             = var.facility
+  metro                = var.metro
   plan                 = var.plan_controlplane
   operating_system     = var.bastion_operating_system
   ssh_private_key_path = module.sshkey.ssh_private_key_file
@@ -60,7 +60,7 @@ module "openshift_bootstrap" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_bootstrap
   plan                 = var.plan_controlplane
-  facility             = var.facility
+  metro                = var.metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
   project_id           = var.project_id
   bastion_ip           = module.bastion.lb_ip
@@ -88,7 +88,7 @@ module "openshift_controlplane" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_controlplane
   plan                 = var.plan_controlplane
-  facility             = var.facility
+  metro                = var.metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
   project_id           = var.project_id
   bastion_ip           = module.bastion.lb_ip
@@ -116,7 +116,7 @@ module "openshift_workers" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_compute
   plan                 = var.plan_compute
-  facility             = var.facility
+  metro                = var.metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
   project_id           = var.project_id
   bastion_ip           = module.bastion.lb_ip

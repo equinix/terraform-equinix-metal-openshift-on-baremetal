@@ -94,7 +94,7 @@ resource "null_resource" "check_port" {
 
     inline = [<<EOT
       i=0;
-      while [[ $(curl -k -s -o /dev/null -w ''%%{http_code}'' https://${length(var.bootstrap_ip) >= 1 ? var.bootstrap_ip[0] : var.bastion_ip}:6443) != '403' ]]; do 
+      while [[ $(curl -fsSL -k -s -o /dev/null -w ''%%{http_code}'' https://${length(var.bootstrap_ip) >= 1 ? var.bootstrap_ip[0] : var.bastion_ip}:6443) != '403' ]]; do 
       ((i++));
       echo "Waiting for TCP6443 on bootstrap/API (Retrying $i of 1200)";
       sleep 2;
