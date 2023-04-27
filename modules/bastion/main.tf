@@ -1,6 +1,6 @@
 locals {
   arch           = "x86_64"
-  coreos_baseurl = "http://54.172.173.155/pub/openshift-v4/dependencies/rhcos"
+  coreos_baseurl = "https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos"
   coreos_url     = "${local.coreos_baseurl}/${var.ocp_version}/${var.ocp_version}.${var.ocp_version_zstream}"
   coreos_filenm  = "rhcos-${var.ocp_version}.${var.ocp_version_zstream}-${local.arch}"
   coreos_img     = "${local.coreos_filenm}-live-rootfs.${local.arch}.img"
@@ -9,7 +9,7 @@ locals {
 
 }
 
-resource "metal_device" "lb" {
+resource "equinix_metal_device" "lb" {
   hostname         = "lb-0.${var.cluster_name}.${var.cluster_basedomain}"
   plan             = var.plan
   metro            = var.metro
@@ -25,7 +25,7 @@ resource "null_resource" "dircheck" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -45,7 +45,7 @@ resource "null_resource" "ocp_install_ignition" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -67,7 +67,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
     content = templatefile("${path.module}/assets/ipxe.tpl", {
@@ -83,7 +83,7 @@ resource "null_resource" "ipxe_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 
@@ -102,7 +102,7 @@ resource "null_resource" "ignition_append_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
     content = templatefile("${path.module}/assets/ignition-append.json.tpl", {
@@ -118,7 +118,7 @@ resource "null_resource" "ignition_append_files" {
 
     connection {
       private_key = file(var.ssh_private_key_path)
-      host        = metal_device.lb.access_public_ipv4
+      host        = equinix_metal_device.lb.access_public_ipv4
     }
 
 

@@ -1,4 +1,4 @@
-resource "metal_device" "node" {
+resource "equinix_metal_device" "node" {
   depends_on       = [var.depends]
   hostname         = format("%s-%01d.%s.%s", var.node_type, count.index, var.cluster_name, var.cluster_basedomain)
   operating_system = "custom_ipxe"

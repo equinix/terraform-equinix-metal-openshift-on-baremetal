@@ -35,6 +35,10 @@ variable "metro" {
   default     = "da"
 }
 
+variable "plan_bastion" {
+  description = "Plan for Bastion"
+  default     = "c3.small.x86"
+}
 variable "plan_controlplane" {
   description = "Plan for Control Plane Nodes"
   default     = "c3.small.x86"
@@ -66,7 +70,7 @@ variable "cluster_name" {
 }
 
 variable "ocp_version" {
-  default     = "4.9"
+  default     = "4.12"
   description = "OpenShift minor release version"
 }
 

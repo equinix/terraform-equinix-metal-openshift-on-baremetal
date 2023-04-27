@@ -1,14 +1,20 @@
 terraform {
   required_providers {
     cloudflare = {
-      source = "cloudflare/cloudflare"
+      source  = "cloudflare/cloudflare"
+      version = "3.6.0" # pinned to prevent required credentials in newer versions
     }
     external = {
       source = "hashicorp/external"
     }
-    metal = {
-      source  = "equinix/metal"
-      version = "3.2.1"
+
+    linode = {
+      source = "linode/linode"
+    }
+
+    equinix = {
+      source  = "equinix/equinix"
+      version = "1.11.1"
     }
     null = {
       source = "hashicorp/null"

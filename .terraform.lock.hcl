@@ -23,9 +23,9 @@ provider "registry.terraform.io/cloudflare/cloudflare" {
   ]
 }
 
-provider "registry.terraform.io/equinix/metal" {
-  version     = "3.2.1"
-  constraints = "3.2.1"
+provider "registry.terraform.io/equinix/equinix" {
+  version     = "1.11.1"
+  constraints = "1.11.1"
   hashes = [
     "h1:/yl9jYcrkaYLMfJTJiNoUzVKxP1y7hsA8B8QTIIz3g0=",
     "zh:001983330b8845ad07f1e7d8462cd2ba2f372d54523d64e382ae5bdd4fe690a5",
