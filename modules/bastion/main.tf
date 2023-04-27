@@ -60,7 +60,7 @@ resource "null_resource" "ocp_install_ignition" {
 
 resource "null_resource" "ipxe_files" {
 
-  depends_on = [metal_device.lb, null_resource.dircheck]
+  depends_on = [equinix_metal_device.lb, null_resource.dircheck]
   for_each   = toset(var.nodes)
 
   provisioner "file" {
@@ -72,7 +72,7 @@ resource "null_resource" "ipxe_files" {
 
     content = templatefile("${path.module}/assets/ipxe.tpl", {
       node_type           = each.value
-      bastion_ip          = metal_device.lb.access_public_ipv4
+      bastion_ip          = equinix_metal_device.lb.access_public_ipv4
       ocp_version         = var.ocp_version
       ocp_version_zstream = var.ocp_version_zstream
     })
@@ -95,7 +95,7 @@ resource "null_resource" "ipxe_files" {
 
 resource "null_resource" "ignition_append_files" {
 
-  depends_on = [metal_device.lb, null_resource.dircheck]
+  depends_on = [equinix_metal_device.lb, null_resource.dircheck]
   for_each   = toset(var.nodes)
 
   provisioner "file" {
@@ -107,7 +107,7 @@ resource "null_resource" "ignition_append_files" {
 
     content = templatefile("${path.module}/assets/ignition-append.json.tpl", {
       node_type          = each.value
-      bastion_ip         = metal_device.lb.access_public_ipv4
+      bastion_ip         = equinix_metal_device.lb.access_public_ipv4
       cluster_name       = var.cluster_name
       cluster_basedomain = var.cluster_basedomain
     })

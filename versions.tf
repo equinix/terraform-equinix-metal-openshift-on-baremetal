@@ -14,11 +14,11 @@ terraform {
 
     equinix = {
       source  = "equinix/equinix"
-      version = "1.11.1"
+      version = "1.14.1"
     }
     null = {
       source = "hashicorp/null"
     }
   }
-  required_version = ">= 0.14"
+  required_version = ">= 1"
 }
