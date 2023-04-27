@@ -9,6 +9,6 @@ output "ssh_public_key" {
 }
 output "metal_ssh_key_id" {
   description = "Equinix Metal UUID of the public SSH Key"
-  value       = metal_ssh_key.ssh_pub_key.id
+  value       = equinix_metal_ssh_key.ssh_pub_key.id
 }
 

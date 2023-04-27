@@ -1,7 +1,7 @@
 terraform {
   required_providers {
-    metal = {
-      source = "equinix/metal"
+    equinix = {
+      source = "equinix/equinix"
     }
     null = {
       source = "hashicorp/null"
