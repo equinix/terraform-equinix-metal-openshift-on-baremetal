@@ -12,7 +12,7 @@ ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@lb-0.${TF_V
 
 ## Stage a Windows 2019 image from Vagrant on you bastion/LB
 
-version=`curl -L -H "Accept: application/json" https://app.vagrantup.com/peru/boxes/windows-server-2019-standard-x64-eval | jq -r '.versions[0].version'`
+version=`curl -fsSL -L -H "Accept: application/json" https://app.vagrantup.com/peru/boxes/windows-server-2019-standard-x64-eval | jq -r '.versions[0].version'`
 
 #ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i ${TF_VAR_ssh_private_key_path} root@lb-0.${TF_VAR_cluster_name}.${TF_VAR_cluster_basedomain} << EOF
 #    wget https://app.vagrantup.com/peru/boxes/windows-server-2016-standard-x64-eval/versions/${version}/providers/libvirt.box -O /usr/share/nginx/html/libvirt.box

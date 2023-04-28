@@ -56,29 +56,22 @@ resource "null_resource" "ocp_pullsecret" {
   }
 }
 
-data "template_file" "installer_config" {
-  depends_on = [null_resource.ocp_pullsecret, null_resource.ocp_installer]
-  template   = file("${path.module}/assets/install-config.yaml.tpl")
-  vars = {
-    cluster_name       = var.cluster_name
-    cluster_basedomain = var.cluster_basedomain
-    ssh_public_key     = var.ssh_public_key
-    count_controlplane = var.count_controlplane
-    count_compute      = var.count_compute
-  }
-}
-
 resource "null_resource" "ocp_install_config" {
-  depends_on = [data.template_file.installer_config, null_resource.ocp_installer, null_resource.ocp_pullsecret]
+  depends_on = [null_resource.ocp_installer, null_resource.ocp_pullsecret]
 
   provisioner "file" {
-
     connection {
       private_key = file(var.ssh_private_key_path)
       host        = var.bastion_ip
     }
 
-    content     = data.template_file.installer_config.rendered
+    content = templatefile("${path.module}/assets/install-config.yaml.tpl", {
+      cluster_name       = var.cluster_name
+      cluster_basedomain = var.cluster_basedomain
+      ssh_public_key     = var.ssh_public_key
+      count_controlplane = var.count_controlplane
+      count_compute      = var.count_compute
+    })
     destination = "/tmp/artifacts/install/install-config.yaml"
   }
 

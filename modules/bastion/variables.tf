@@ -17,13 +17,13 @@ variable "billing_cycle" {
 
 variable "plan" {
   description = "The server type to deploy"
-  default     = "c2.medium.x86"
+  default     = "c3.small.x86"
   type        = string
 }
 
-variable "facility" {
+variable "metro" {
   description = "The location of the servers"
-  default     = "sjc1"
+  default     = "da"
   type        = string
 }
 

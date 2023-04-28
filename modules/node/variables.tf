@@ -1,6 +1,6 @@
 variable "plan" {}
 variable "node_count" {}
-variable "facility" {}
+variable "metro" {}
 variable "cluster_name" {}
 variable "cluster_basedomain" {}
 variable "ssh_private_key_path" {}

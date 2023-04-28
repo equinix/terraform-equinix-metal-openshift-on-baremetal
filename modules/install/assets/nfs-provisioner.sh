@@ -7,9 +7,9 @@ BASTION_IP=$2
 export KUBECONFIG=$RDIR/artifacts/install/auth/kubeconfig;
 
 # Pull NFS Provisioner manifests
-curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/rbac.yaml > $RDIR/artifacts/install/nfsp-rbac.yaml
-curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/deployment.yaml > $RDIR/artifacts/install/nfsp-deployment.yaml
-curl https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/class.yaml > $RDIR/artifacts/install/nfsp-class.yaml
+curl -fsSL https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/rbac.yaml > $RDIR/artifacts/install/nfsp-rbac.yaml
+curl -fsSL https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/deployment.yaml > $RDIR/artifacts/install/nfsp-deployment.yaml
+curl -fsSL https://raw.githubusercontent.com/kubernetes-incubator/external-storage/master/nfs-client/deploy/class.yaml > $RDIR/artifacts/install/nfsp-class.yaml
 
 # Retarget oc binary
 export oc=$RDIR/artifacts/oc
