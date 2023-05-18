@@ -2,48 +2,18 @@
 
 # OpenShift via Terraform on Equinix Metal
 
-This collection of modules will deploy will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://metal.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
+This collection of modules will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://deploy.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
 
-## Install Terraform
+## Install
 
-Terraform is just a single binary. Visit their [download page](https://www.terraform.io/downloads.html), choose your operating system, make the binary executable, and move it into your path.
-
-Here is an example for **macOS**:
-
-```bash
-curl -LO https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_darwin_amd64.zip
-unzip terraform_0.14.7_darwin_amd64.zip
-chmod +x terraform
-sudo mv terraform /usr/local/bin/
-```
-
-Example for **Linux**:
-
-```bash
-wget https://releases.hashicorp.com/terraform/0.14.7/terraform_0.14.7_linux_amd64.zip
-unzip terraform_0.14.7_linux_amd64.zip
-sudo install terraform /usr/local/bin/
-```
+With your [Equinix Metal account, project, and a **User** API token](https://metal.equinix.com/developers/docs/accounts/users/), you can use [Terraform v1+](https://learn.hashicorp.com/tutorials/terraform/install-cli) to install a proof-of-concept demonstration environment for OpenShift on Equinix Metal.
 
 ### Additional requirements
 
 `local-exec` provisioners require the use of:
 
-- `curl`
-- `jq`
-
-To install `jq` on **RHEL/CentOS**:
-
-```bash
-wget https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
-sudo install jq-linux64 /usr/local/bin/jq
-```
-
-To install `jq` on **Debian/Ubuntu**:
-
-```bash
-sudo apt-get install jq
-```
+- `curl` ([install instructions](https://everything.curl.dev/get))
+- `jq` ([install instructions](https://stedolan.github.io/jq/download/))
 
 ## Download this project
 
