@@ -2,7 +2,7 @@
 
 # OpenShift via Terraform on Equinix Metal
 
-This collection of modules will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://deploy.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com).
+This collection of modules will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) environment consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://deploy.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com), AWS Route53, or Linode DNS.
 
 ## Install
 
