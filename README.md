@@ -1,4 +1,5 @@
-[![Terraform CI](https://github.com/equinix/terraform-metal-openshift-on-baremetal/workflows/Terraform%20CI/badge.svg)](https://github.com/equinix/terraform-metal-openshift-on-baremetal/actions?query=workflow%3A%22Terraform+CI%22) [![](https://img.shields.io/badge/stability-experimental-red.svg)](#experimental-statatement)
+[![terraform](https://github.com/equinix/terraform-equinix-metal-openshift-on-baremetal/actions/workflows/terraform.yaml/badge.svg)](https://github.com/equinix/terraform-equinix-metal-openshift-on-baremetal/actions/workflows/terraform.yaml)
+[![](https://img.shields.io/badge/stability-experimental-red.svg)](https://github.com/equinix-labs/equinix-labs/blob/main/experimental-statement.md#experimental-statement)
 
 # OpenShift via Terraform on Equinix Metal
 
@@ -6,7 +7,7 @@ This collection of modules will deploy a bare metal [OpenShift](https://docs.ope
 
 ## Install
 
-With your [Equinix Metal account, project, and a **User** API token](https://metal.equinix.com/developers/docs/accounts/users/), you can use [Terraform v1+](https://learn.hashicorp.com/tutorials/terraform/install-cli) to install a proof-of-concept demonstration environment for OpenShift on Equinix Metal.
+With your [Equinix Metal account, project, and a **User** API token](https://deploy.equinix.com/developers/docs/metal/identity-access-management/users/), you can use [Terraform v1+](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) to install a proof-of-concept demonstration environment for OpenShift on Equinix Metal.
 
 ### Additional requirements
 
@@ -20,8 +21,8 @@ With your [Equinix Metal account, project, and a **User** API token](https://met
 To download this project, run the following command:
 
 ```bash
-git clone https://github.com/equinix/terraform-metal-openshift-on-baremetal.git
-cd terraform-metal-openshift
+git clone https://github.com/equinix/terraform-equinix-metal-openshift-on-baremetal.git
+cd terraform-equinix-metal-openshift
 ```
 
 ## Usage
