@@ -1,27 +1,34 @@
 
 variable "dns_provider" {
   type        = string
-  description = "Name of the DNS module to use (cloudflare, linode)"
+  description = <<EOS
+    Name of the DNS module to use (cloudflare, aws, linode)
+
+    Choose the provider where cluster_basedomain's DNS is hosted.
+    See the provider documentation for details on how to configure the provider. Add new modules to modules/dns.
+    This module relies on external configuration, such as environment variables or provider specific configuration profiles, to configure the provider.
+
+    Examples:
+
+    export LINODE_TOKEN="..."
+    export CLOUDFLARE_API_TOKEN="..."
+    export AWS_ACCESS_KEY_ID="..."
+    export AWS_SECRET_ACCESS_KEY="..."
+    export AWS_REGION="us-east-1"
+  EOS
   default     = "cloudflare"
 }
 
-variable "dns_options" {
-  type        = any
-  description = "Options specific to the dns module. Check the documentation for the dns module for details. Example: {\"email\":\"\", \"api_key\": \"\"}"
-  default     = null
-}
-
 variable "cluster_basedomain" {
-  description = "Your Cloudflare Base domain for your cluster"
+  description = "Your DNS Base domain for your cluster. This is the zone in your DNS provider. i.e. worker-1.{cluster_name}.{cluster_basedomain}"
 }
 
-
-variable "auth_token" {
+variable "metal_auth_token" {
   description = "Your Equinix Metal API key"
   sensitive   = true
 }
 
-variable "project_id" {
+variable "metal_project_id" {
   description = "Your Equinix Metal Project ID"
 }
 
@@ -30,7 +37,7 @@ variable "bastion_operating_system" {
   default     = "rhel_7"
 }
 
-variable "metro" {
+variable "metal_metro" {
   description = "Your primary metro"
   default     = "da"
 }
@@ -66,7 +73,7 @@ variable "count_compute" {
 
 variable "cluster_name" {
   default     = "metal"
-  description = "Cluster name label"
+  description = "Cluster name label. cluster_name will be suffixed for all DNS names. i.e. worker-1.{cluster_name}.{cluster_basedomain}"
 }
 
 variable "ocp_version" {

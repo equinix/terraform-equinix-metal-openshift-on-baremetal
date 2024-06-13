@@ -1,0 +1,10 @@
+# metal_project_id="uuid"
+# metal_auth_token="token"
+
+# cluster_basedomain="example.com" # This is the zone in your DNS provider. cluster_name will be suffixed for all DNS names. worker-1.{cluster_name}.{cluster_basedomain} 
+# cluster_name="openshift"
+# ocp_cluster_manager_token="..." # OpenShift Cluster Manager API Token used to generate your pullSecret (https://cloud.redhat.com/openshift/token)
+
+# dns_provider="linode" # also set LINODE_TOKEN environment variable
+# dns_provider="aws" # also use locally configured AWS profile
+# dns_provider="cloudflare" # also set CLOUDFLARE_API_TOKEN environment variable

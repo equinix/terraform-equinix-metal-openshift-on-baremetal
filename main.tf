@@ -1,5 +1,5 @@
 provider "equinix" {
-  auth_token = var.auth_token
+  auth_token = var.metal_auth_token
 }
 
 module "sshkey" {
@@ -12,8 +12,8 @@ module "bastion" {
   source     = "./modules/bastion"
   depends_on = [module.sshkey]
 
-  project_id           = var.project_id
-  metro                = var.metro
+  project_id           = var.metal_project_id
+  metro                = var.metal_metro
   plan                 = var.plan_bastion
   operating_system     = var.bastion_operating_system
   ssh_private_key_path = module.sshkey.ssh_private_key_file
@@ -28,7 +28,6 @@ module "dns_lb" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -60,9 +59,9 @@ module "openshift_bootstrap" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_bootstrap
   plan                 = var.plan_controlplane
-  metro                = var.metro
+  metro                = var.metal_metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
-  project_id           = var.project_id
+  project_id           = var.metal_project_id
   bastion_ip           = module.bastion.lb_ip
   node_type            = "bootstrap"
   depends              = [module.prepare_openshift.finished]
@@ -72,7 +71,6 @@ module "dns_bootstrap" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -88,9 +86,9 @@ module "openshift_controlplane" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_controlplane
   plan                 = var.plan_controlplane
-  metro                = var.metro
+  metro                = var.metal_metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
-  project_id           = var.project_id
+  project_id           = var.metal_project_id
   bastion_ip           = module.bastion.lb_ip
   node_type            = "master"
   depends              = [module.prepare_openshift.finished]
@@ -100,7 +98,6 @@ module "dns_controlplane" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -116,9 +113,9 @@ module "openshift_workers" {
   cluster_basedomain   = var.cluster_basedomain
   node_count           = var.count_compute
   plan                 = var.plan_compute
-  metro                = var.metro
+  metro                = var.metal_metro
   ssh_private_key_path = module.sshkey.ssh_private_key_file
-  project_id           = var.project_id
+  project_id           = var.metal_project_id
   bastion_ip           = module.bastion.lb_ip
   node_type            = "worker"
   depends              = [module.prepare_openshift.finished]
@@ -128,7 +125,6 @@ module "dns_workers" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -156,11 +152,16 @@ module "openshift_install" {
   ocp_virtualization_enable = var.ocp_virtualization_enable
 }
 
+
 resource "null_resource" "get_kubeconfig" {
   depends_on = [module.prepare_openshift.finished]
 
   provisioner "local-exec" {
-    command = "mkdir -p ${path.root}/auth; scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.sshkey.ssh_private_key_file} root@${module.bastion.lb_ip}:/tmp/artifacts/install/auth/* ${path.root}/auth/"
+    command = <<EOT
+      [[ -d ${path.root}/auth ]] || mkdir -p ${path.root}/auth
+      /usr/bin/scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.sshkey.ssh_private_key_file} root@${module.bastion.lb_ip}:/tmp/artifacts/install/auth/ ${path.root}/auth/
+    EOT
+    interpreter = [ "/bin/bash", "-c" ]
   }
 }
 
