@@ -11,7 +11,7 @@ This deployment automation uses the Cloudflare Managed DNS service.
    This domain name (in its "base domain" form) will be used later as a value for the `cluster_basedomain` variable in the Terraform configuration.
 
    ```console
-   Example of the cluster_basedomain value: "domain.com"
+   Example of the cluster_basedomain value: "example.com"
    ```
 
 1. Create Cloudflare account
@@ -32,22 +32,12 @@ This deployment automation uses the Cloudflare Managed DNS service.
 
 1. Copy the API key
 
-   On the same page as above click on the “Get your API token” link.
+   Follow the directions on <https://developers.cloudflare.com/fundamentals/api/get-started/create-token/> to create an API Token for use with this zone.
 
-   You will be presented with the “API Token” tab from the “My Profile” page, click the “View” button at the “Global API key”.
-
-   Save this key value, it will be used later as value of the `dns_options` `api_key` option in the Terraform configuration.
+   Save this key value. You will use it in your Terraform environment by defining it as `CLOUDFLARE_API_TOKEN` in the environment.
 
    ```console
-   Example of the cf_api_key parameter value: "65ca543659011ba2a13b2ab06dab12c158bcb"
-   ```
-
-1. Copy email address
-
-   On the page above, change to the “Communication” page and save the “Email Address” value, it will be used later as the `dns_options` `email` option in the Terraform configuration.
-
-   ```console
-   Example of the cf_email parameter value: "me@mywork.org"
+   Example of the cf_api_token parameter value: "65ca543659011ba2a13b2ab06dab12c158bcb"
    ```
 
 [Top](README.md)
