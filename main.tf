@@ -28,7 +28,6 @@ module "dns_lb" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -72,7 +71,6 @@ module "dns_bootstrap" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -100,7 +98,6 @@ module "dns_controlplane" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain
@@ -128,7 +125,6 @@ module "dns_workers" {
   source = "./modules/dns"
 
   dns_provider = var.dns_provider
-  dns_options  = var.dns_options
 
   cluster_name       = var.cluster_name
   cluster_basedomain = var.cluster_basedomain

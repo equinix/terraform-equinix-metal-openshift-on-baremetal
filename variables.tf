@@ -1,14 +1,22 @@
 
 variable "dns_provider" {
   type        = string
-  description = "Name of the DNS module to use (cloudflare, aws, linode). Choose the provider where cluster_basedomain's DNS is hosted. Add new modules to modules/dns."
-  default     = "cloudflare"
-}
+  description = <<EOS
+    Name of the DNS module to use (cloudflare, aws, linode)
 
-variable "dns_options" {
-  type        = any
-  description = "DEPRECATED (use Terraform provider environment variables to configure your dns_provider): Options specific to the dns module. Check the documentation for the dns module for details. Example: {\"email\":\"\", \"api_key\": \"\"}"
-  default     = null
+    Choose the provider where cluster_basedomain's DNS is hosted.
+    See the provider documentation for details on how to configure the provider. Add new modules to modules/dns.
+    This module relies on external configuration, such as environment variables or provider specific configuration profiles, to configure the provider.
+
+    Examples:
+
+    export LINODE_TOKEN="..."
+    export CLOUDFLARE_API_TOKEN="..."
+    export AWS_ACCESS_KEY_ID="..."
+    export AWS_SECRET_ACCESS_KEY="..."
+    export AWS_REGION="us-east-1"
+  EOS
+  default     = "cloudflare"
 }
 
 variable "cluster_basedomain" {

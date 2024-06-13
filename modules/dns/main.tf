@@ -3,12 +3,9 @@
 // unused provider will not prevent the needed provider from succeeding.
 
 # provider "cloudflare" {
-# must use environment CLOUDFLARE_API_TOKEN
-# see https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs
-#  api_token = try(var.dns_options.api_token, "")
-#  api_key   = try(var.dns_options.api_key, null)
-#  email     = try(var.dns_options.email, "")
-# }
+#  must use environment CLOUDFLARE_API_TOKEN
+#  see https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs
+#}
 
 # provider "linode" {
 #  must use environment -- LINODE_TOKEN
