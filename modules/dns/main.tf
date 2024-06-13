@@ -2,18 +2,29 @@
 // provider definitions to this layer and assume that an invalid token for the
 // unused provider will not prevent the needed provider from succeeding.
 
-provider "cloudflare" {
-  api_token = try(var.dns_options.api_token, "")
-  api_key   = try(var.dns_options.api_key, null)
-  email     = try(var.dns_options.email, "")
-}
+# provider "cloudflare" {
+# must use environment CLOUDFLARE_API_TOKEN
+# see https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs
+#  api_token = try(var.dns_options.api_token, "")
+#  api_key   = try(var.dns_options.api_key, null)
+#  email     = try(var.dns_options.email, "")
+# }
 
-provider "linode" {
-  token = try(var.dns_options.api_token, "")
-}
+# provider "linode" {
+#  must use environment -- LINODE_TOKEN
+# }
 
 provider "aws" {
-  region = "us-east-1" # doesn't matter
+# AWS credentials are optional for this module. Skip AWS settings that require credentials.
+# see https://registry.terraform.io/providers/-/aws/latest/docs#environment-variables
+  skip_credentials_validation = (var.dns_provider == "aws" ? false : true)
+  skip_metadata_api_check = (var.dns_provider == "aws" ? false : true) # AWS_EC2_METADATA_DISABLED
+  skip_region_validation = (var.dns_provider == "aws" ? false : true) # AWS_REGION
+  skip_requesting_account_id = (var.dns_provider == "aws" ? false : true)
+
+  access_key = (var.dns_provider == "aws" ? null : "none") # use local profile config or environment AWS_ACCESS_KEY_ID
+  secret_key = (var.dns_provider == "aws" ? null : "none") # use local profile config or environment AWS_SECRET_ACCESS_KEY
+  region = "us-east-1"
 }
 
 module "aws" {
