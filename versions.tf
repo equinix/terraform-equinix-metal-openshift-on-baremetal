@@ -9,7 +9,7 @@ terraform {
     }
     aws = {
       source = "hashicorp/aws"
-      version = "~> 3.0" # Pin to a version that does not require working provider configuration
+      version = "~> 5.0" # Pin to a version that does not require working provider configuration
     }
     linode = {
       source = "linode/linode"
