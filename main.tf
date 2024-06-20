@@ -159,7 +159,7 @@ resource "null_resource" "get_kubeconfig" {
   provisioner "local-exec" {
     command = <<EOT
       [[ -d ${path.root}/auth ]] || mkdir -p ${path.root}/auth
-      /usr/bin/scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.sshkey.ssh_private_key_file} root@${module.bastion.lb_ip}:/tmp/artifacts/install/auth/ ${path.root}/auth/
+      /usr/bin/scp -r -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ${module.sshkey.ssh_private_key_file} root@${module.bastion.lb_ip}:/tmp/artifacts/install/auth/* ${path.root}/auth/
     EOT
     interpreter = [ "/bin/bash", "-c" ]
   }
