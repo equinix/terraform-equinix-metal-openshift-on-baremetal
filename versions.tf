@@ -17,7 +17,7 @@ terraform {
 
     equinix = {
       source  = "equinix/equinix"
-      version = "~> 1.14"
+      version = "~> 2.0"
     }
     null = {
       source = "hashicorp/null"
