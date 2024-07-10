@@ -16,7 +16,38 @@ resource "equinix_metal_device" "lb" {
   operating_system = var.operating_system
   billing_cycle    = var.billing_cycle
   project_id       = var.project_id
-  user_data        = file("${path.module}/assets/user_data_${var.operating_system}.sh")
+  user_data        = data.cloudinit_config.lb.rendered
+}
+
+
+resource "equinix_metal_port" "lb_bond0" {
+  port_id  = [for p in equinix_metal_device.lb.ports : p.id if p.name == "bond0"][0]
+  layer2   = false
+  bonded   = true
+  vlan_ids = [var.vlan]
+}
+
+
+data "cloudinit_config" "lb" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename = "cloud-config.cfg"
+    content  = templatefile("${path.module}/assets/cloudinit_${var.operating_system}.cfg.tpl",
+    {
+      metal_vlan_id   = 1000,
+      address         = cidrhost(var.cluster_subnet, 2),
+      netmask         = cidrnetmask(var.cluster_subnet),
+      host_dhcp_start = cidrhost(var.cluster_subnet, 3),
+      host_dhcp_end   = cidrhost(var.cluster_subnet, 15),
+      lease_time      = "infinite",
+    })
+  }
+  part {
+    filename = "user-data"
+    content  = file("${path.module}/assets/user_data_${var.operating_system}.sh")
+  }
 }
 
 resource "null_resource" "dircheck" {
@@ -72,7 +103,7 @@ resource "null_resource" "ipxe_files" {
 
     content = templatefile("${path.module}/assets/ipxe.tpl", {
       node_type           = each.value
-      bastion_ip          = equinix_metal_device.lb.access_public_ipv4
+      bastion_ip          = equinix_metal_device.lb.access_private_ipv4
       ocp_version         = var.ocp_version
       ocp_version_zstream = var.ocp_version_zstream
     })
@@ -107,7 +138,7 @@ resource "null_resource" "ignition_append_files" {
 
     content = templatefile("${path.module}/assets/ignition-append.json.tpl", {
       node_type          = each.value
-      bastion_ip         = equinix_metal_device.lb.access_public_ipv4
+      bastion_ip         = equinix_metal_device.lb.access_private_ipv4
       cluster_name       = var.cluster_name
       cluster_basedomain = var.cluster_basedomain
     })

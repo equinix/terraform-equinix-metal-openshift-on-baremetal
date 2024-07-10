@@ -8,6 +8,13 @@ module "sshkey" {
   cluster_name = var.cluster_name
 }
 
+module "network" {
+  source = "./modules/network"
+
+  project_id = var.metal_project_id
+  metal_metro      = var.metal_metro
+}
+
 module "bastion" {
   source     = "./modules/bastion"
   depends_on = [module.sshkey]
@@ -21,7 +28,7 @@ module "bastion" {
   cluster_basedomain   = var.cluster_basedomain
   ocp_version          = var.ocp_version
   ocp_version_zstream  = var.ocp_version_zstream
-  //depends              = [module.prepare_openshift.finished]
+  vlan = var.metal_vlan
 }
 
 module "dns_lb" {
