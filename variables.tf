@@ -32,6 +32,11 @@ variable "metal_project_id" {
   description = "Your Equinix Metal Project ID"
 }
 
+variable "metal_vlan" {
+  description = "Your Equinix Metal VLAN (ex. 1000)"
+  default = 1000
+}
+
 variable "bastion_operating_system" {
   description = "Your preferred bastion operating systems (RHEL or CentOS)"
   default     = "rhel_7"
