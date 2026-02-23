@@ -1,6 +1,9 @@
 [![terraform](https://github.com/equinix/terraform-equinix-metal-openshift-on-baremetal/actions/workflows/terraform.yaml/badge.svg)](https://github.com/equinix/terraform-equinix-metal-openshift-on-baremetal/actions/workflows/terraform.yaml)
 [![](https://img.shields.io/badge/stability-experimental-red.svg)](https://github.com/equinix-labs/equinix-labs/blob/main/experimental-statement.md#experimental-statement)
 
+> [!WARNING]
+> With the upcoming EoL of Equinix Metal on June 30, 2026, this repo is being archived on February 28, 2026.
+
 # OpenShift via Terraform on Equinix Metal
 
 This collection of modules will deploy a bare metal [OpenShift](https://docs.openshift.com/container-platform/latest/installing/installing_bare_metal/installing-bare-metal.html) environment consisting of (1) ephemeral bootstrap node, (3) control plane nodes, and a user-configured count of worker nodes<sup>[1](#3nodedeployment)</sup> on [Equinix Metal](https://deploy.equinix.com). DNS records are automatically configured using [Cloudflare](http://cloudflare.com), AWS Route53, or Linode DNS.
