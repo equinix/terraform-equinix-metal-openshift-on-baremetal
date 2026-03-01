@@ -42,3 +42,15 @@ variable "nodes" {
   type        = list(string)
   default     = ["bootstrap", "master", "worker"]
 }
+
+variable "vlan" {
+  description = "VLAN to use"
+  type        = number
+  default     = 1000
+}
+
+variable "cluster_subnet" {
+  description = "The subnet to use for the cluster"
+  type        = string
+  default     = "192.168.100.0/22"
+}

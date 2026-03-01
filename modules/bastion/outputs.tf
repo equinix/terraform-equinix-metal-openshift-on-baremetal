@@ -2,6 +2,10 @@ output "lb_ip" {
   value = equinix_metal_device.lb.access_public_ipv4
 }
 
+output "node_ip" {
+  value = equinix_metal_device.lb.access_private_ipv4
+}
+
 output "finished" {
   depends_on = [
     null_resource.ipxe_files,

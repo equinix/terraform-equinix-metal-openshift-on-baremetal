@@ -17,3 +17,4 @@ systemctl start nfs-server.service
 
 mkdir -p /mnt/nfs/ocp
 chmod -R 777 /mnt/nfs/ocp
+
